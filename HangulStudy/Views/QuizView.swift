@@ -69,6 +69,7 @@ final class QuizModel: ObservableObject {
     @Published private(set) var index = 0
     @Published private(set) var score = 0
     @Published private(set) var selected: String?
+    @Published private(set) var missedLetters: [HangulLetter] = []
 
     private let progress: ProgressStore
 
@@ -98,6 +99,7 @@ final class QuizModel: ObservableObject {
         index = 0
         score = 0
         selected = nil
+        missedLetters = []
     }
 
     private func makeQuestion(for letter: HangulLetter, mode: QuizMode, pool: [HangulLetter]) -> QuizQuestion {
@@ -117,7 +119,11 @@ final class QuizModel: ObservableObject {
         guard selected == nil, let current else { return false }
         selected = option
         let isCorrect = option == current.answer
-        if isCorrect { score += 1 }
+        if isCorrect {
+            score += 1
+        } else {
+            missedLetters.append(current.letter)
+        }
         progress.record(current.letter, correct: isCorrect)
         return isCorrect
     }
@@ -197,9 +203,14 @@ struct QuizView: View {
     private func questionScreen(_ question: QuizQuestion) -> some View {
         ScrollView {
             VStack(spacing: 18) {
-                Text("\(L.questionProgress(language)) \(model.progressText)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                VStack(spacing: 6) {
+                    ProgressView(value: Double(model.index + 1),
+                                 total: Double(max(model.questions.count, 1)))
+                    Text("\(L.questionProgress(language)) \(model.progressText)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: 420)
 
                 Group {
                     if question.mode == .seeLetter {
@@ -283,16 +294,61 @@ struct QuizView: View {
     // MARK: - Result
 
     private var resultScreen: some View {
-        VStack(spacing: 16) {
-            Text(L.quizDone(language))
-                .font(.largeTitle.bold())
-            Text("\(L.score(language)): \(model.score) / \(model.questions.count)")
-                .font(.title2)
-            Button(L.tryAgain(language)) { model.start(mode: mode, scope: scope) }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+        ScrollView {
+            VStack(spacing: 16) {
+                Text(L.quizDone(language))
+                    .font(.largeTitle.bold())
+                Text("\(L.score(language)): \(model.score) / \(model.questions.count)")
+                    .font(.title2)
+
+                if model.missedLetters.isEmpty {
+                    Label(L.quizPerfect(language), systemImage: "star.fill")
+                        .font(.headline)
+                        .foregroundStyle(.green)
+                } else {
+                    missedList
+                }
+
+                Button(L.tryAgain(language)) { model.start(mode: mode, scope: scope) }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+            }
+            .frame(maxWidth: 420)
+            .frame(maxWidth: .infinity)
         }
+        .scrollBounceBehavior(.basedOnSize)
         .onAppear { SoundEffects.shared.playComplete() }
+    }
+
+    private var missedList: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.quizReviewMissed(language))
+                .font(.headline)
+
+            ForEach(model.missedLetters) { letter in
+                Button {
+                    SpeechService.shared.speak(letter)
+                } label: {
+                    HStack(spacing: 14) {
+                        Text(letter.character)
+                            .font(.system(size: 32, weight: .medium))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(letter.romanization)
+                            Text(letter.name)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "speaker.wave.2.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

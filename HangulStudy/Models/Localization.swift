@@ -125,7 +125,15 @@ enum L {
         en: "Tap to hear pronunciation, take quizzes, practice writing. Progress is saved and scheduled for review."
     )
 
+    // Lọc bảng chữ cái
+    static let learnFilterAll = Bilingual(vi: "Tất cả", en: "All")
+    static let learnFilterRemaining = Bilingual(vi: "Chưa thuộc", en: "Not learned")
+    static let learnAllLearned = Bilingual(vi: "Bạn đã thuộc hết bảng chữ cái! 🎉",
+                                           en: "You've learned every letter! 🎉")
+
     // Quiz
+    static let quizReviewMissed = Bilingual(vi: "Cần ôn lại", en: "Review these")
+    static let quizPerfect = Bilingual(vi: "Tuyệt vời — đúng tất cả!", en: "Perfect — every answer correct!")
     static let quizModeSeeLetter = Bilingual(vi: "Nhìn chữ", en: "See letter")
     static let quizModeHearSound = Bilingual(vi: "Nghe âm", en: "Hear sound")
     static let quizScopeAll = Bilingual(vi: "Tất cả", en: "All")
