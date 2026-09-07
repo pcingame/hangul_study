@@ -133,18 +133,23 @@ struct QuizView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if model.questions.isEmpty {
-                    startScreen
-                } else if model.isFinished {
-                    resultScreen
-                } else if let question = model.current {
-                    questionScreen(question)
-                }
-            }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle(L.quizTitle(language))
+            content
+                .navigationTitle(L.quizTitle(language))
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if model.questions.isEmpty {
+            startScreen
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if model.isFinished {
+            resultScreen
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let question = model.current {
+            questionScreen(question)
         }
     }
 
@@ -184,64 +189,77 @@ struct QuizView: View {
     // MARK: - Question
 
     private func questionScreen(_ question: QuizQuestion) -> some View {
-        VStack(spacing: 24) {
-            Text("\(L.questionProgress(language)) \(model.progressText)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        ScrollView {
+            VStack(spacing: 18) {
+                Text("\(L.questionProgress(language)) \(model.progressText)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
 
-            if question.mode == .seeLetter {
-                Text(question.letter.character)
-                    .font(.system(size: 120, weight: .medium))
-            } else {
-                Button {
-                    SpeechService.shared.speak(question.letter)
-                } label: {
-                    Image(systemName: "speaker.wave.3.fill")
-                        .font(.system(size: 72))
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.tint)
-            }
-
-            Text(question.prompt(language))
-                .font(.headline)
-
-            VStack(spacing: 12) {
-                ForEach(question.options, id: \.self) { option in
-                    Button {
-                        let correct = model.choose(option)
-                        haptics.notificationOccurred(correct ? .success : .error)
-                        SpeechService.shared.speak(question.letter)
-                    } label: {
-                        Text(option)
-                            .font(question.mode == .hearSound ? .system(size: 34, weight: .medium) : .body)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, question.mode == .hearSound ? 4 : 6)
+                Group {
+                    if question.mode == .seeLetter {
+                        Text(question.letter.character)
+                            .font(.system(size: 88, weight: .medium))
+                    } else {
+                        Button {
+                            SpeechService.shared.speak(question.letter)
+                        } label: {
+                            Image(systemName: "speaker.wave.3.fill")
+                                .font(.system(size: 60))
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.tint)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-                    .tint(optionTint(option, question: question))
-                    .disabled(model.selected != nil)
                 }
-            }
+                .frame(height: 110)
 
-            if let selected = model.selected {
-                Text(selected == question.answer
-                     ? L.correct(language)
-                     : "\(L.wrong(language)) — \(question.answer)")
+                Text(question.prompt(language))
                     .font(.headline)
-                    .foregroundStyle(selected == question.answer ? .green : .red)
 
-                Button(model.index + 1 < model.questions.count ? L.nextQuestion(language) : L.seeResult(language)) {
-                    model.advance()
+                VStack(spacing: 10) {
+                    ForEach(question.options, id: \.self) { option in
+                        Button {
+                            let correct = model.choose(option)
+                            haptics.notificationOccurred(correct ? .success : .error)
+                            SpeechService.shared.speak(question.letter)
+                        } label: {
+                            Text(option)
+                                .font(question.mode == .hearSound ? .title2.weight(.medium) : .body)
+                                .frame(maxWidth: .infinity, minHeight: 28)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .tint(optionTint(option, question: question))
+                        .disabled(model.selected != nil)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
             }
-
-            Spacer()
+            .frame(maxWidth: 420)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
+            .padding(.top)
         }
-        .frame(maxWidth: 420)
+        .scrollBounceBehavior(.basedOnSize)
+        .safeAreaInset(edge: .bottom) {
+            if let selected = model.selected {
+                VStack(spacing: 10) {
+                    Text(selected == question.answer
+                         ? L.correct(language)
+                         : "\(L.wrong(language)) — \(question.answer)")
+                        .font(.headline)
+                        .foregroundStyle(selected == question.answer ? .green : .red)
+
+                    Button(model.index + 1 < model.questions.count ? L.nextQuestion(language) : L.seeResult(language)) {
+                        model.advance()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
+                .frame(maxWidth: 420)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(.bar)
+            }
+        }
     }
 
     private func optionTint(_ option: String, question: QuizQuestion) -> Color {
