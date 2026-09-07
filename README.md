@@ -4,15 +4,17 @@
 
 ## Ảnh chụp màn hình
 
+### Giao diện sáng
+
 | Học | Kiểm tra | Luyện viết | Cài đặt |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/learn-dark.png" width="200"> | <img src="docs/screenshots/quiz.png" width="200"> | <img src="docs/screenshots/write.png" width="200"> | <img src="docs/screenshots/settings.png" width="200"> |
+| <img src="docs/screenshots/learn-light.png" width="200"> | <img src="docs/screenshots/quiz-light.png" width="200"> | <img src="docs/screenshots/write-light.png" width="200"> | <img src="docs/screenshots/settings-light.png" width="200"> |
 
-Giao diện sáng / tối:
+### Giao diện tối
 
-| Sáng | Tối |
-|:---:|:---:|
-| <img src="docs/screenshots/learn-light.png" width="200"> | <img src="docs/screenshots/learn-dark.png" width="200"> |
+| Học | Kiểm tra | Luyện viết | Cài đặt |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/learn-dark.png" width="200"> | <img src="docs/screenshots/quiz-dark.png" width="200"> | <img src="docs/screenshots/write-dark.png" width="200"> | <img src="docs/screenshots/settings-dark.png" width="200"> |
 
 ## Tính năng
 
