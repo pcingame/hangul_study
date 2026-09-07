@@ -2,6 +2,18 @@
 
 Ứng dụng iOS học bảng chữ cái tiếng Hàn (Hangul), viết bằng SwiftUI.
 
+## Ảnh chụp màn hình
+
+| Học | Kiểm tra | Luyện viết | Cài đặt |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/learn-dark.png" width="200"> | <img src="docs/screenshots/quiz.png" width="200"> | <img src="docs/screenshots/write.png" width="200"> | <img src="docs/screenshots/settings.png" width="200"> |
+
+Giao diện sáng / tối:
+
+| Sáng | Tối |
+|:---:|:---:|
+| <img src="docs/screenshots/learn-light.png" width="200"> | <img src="docs/screenshots/learn-dark.png" width="200"> |
+
 ## Tính năng
 
 - **Học** — lưới 45 chữ cái chia theo nhóm (phụ âm cơ bản, nguyên âm cơ bản, phụ âm đôi, nguyên âm ghép). Chạm vào chữ để xem chi tiết: tên chữ, cách đọc, từ ví dụ kèm nghĩa.
