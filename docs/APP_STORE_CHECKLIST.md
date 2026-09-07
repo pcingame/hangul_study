@@ -121,7 +121,10 @@ App không dùng mã hóa nào ngoài của hệ thống → khai báo sẵn đ�
 
 - [ ] **iPhone 6.9"** (1290×2796 hoặc 1320×2868) — bắt buộc, 3–10 ảnh
 - [x] **iPad**: đã tắt (`TARGETED_DEVICE_FAMILY = 1`) → không cần screenshot iPad
-- [ ] Chụp bằng Simulator: `Cmd+S` trong Simulator, hoặc `xcrun simctl io booted screenshot`. Đã có sẵn ảnh trong `docs/screenshots/` để tham khảo.
+- [ ] Chụp bằng Simulator **iPhone 17 Pro Max** (ra đúng 1320×2868). Mở app, `Cmd+S` trong Simulator hoặc `xcrun simctl io booted screenshot out.png`. Đổi tab bằng tay rồi chụp từng màn: Học / Ghép chữ / Kiểm tra / Luyện viết / chi tiết một chữ.
+  - Seed cho đẹp: `xcrun simctl spawn booted defaults write com.koreastudy.HangulStudy didOnboard -bool YES`, relaunch; nhớ `defaults delete` sau khi chụp.
+  - *(Không tự động hoá được trong phiên Claude: môi trường sandbox không tap được Simulator; chỉ `xcrun simctl io screenshot` chạy được.)*
+  - Ảnh cũ (cỡ khác) ở `docs/screenshots/`.
 - [ ] App preview video: tuỳ chọn
 
 ---
