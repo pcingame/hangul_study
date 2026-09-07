@@ -286,6 +286,7 @@ struct QuizView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
         }
+        .onAppear { SoundEffects.shared.playComplete() }
     }
 }
 

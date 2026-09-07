@@ -6,6 +6,7 @@ final class SoundEffects {
 
     private let correctPlayer: AVAudioPlayer?
     private let wrongPlayer: AVAudioPlayer?
+    private let completePlayer: AVAudioPlayer?
 
     private enum Waveform { case sine, square }
 
@@ -18,13 +19,18 @@ final class SoundEffects {
         wrongPlayer = Self.makePlayer(
             notes: [(220, 0.12), (165, 0.22)], waveform: .square, volume: 0.28
         )
+        // Hoàn thành: hợp âm rải đi lên, nốt cuối ngân dài.
+        completePlayer = Self.makePlayer(
+            notes: [(659, 0.10), (784, 0.10), (988, 0.10), (1319, 0.34)], waveform: .sine, volume: 0.32
+        )
     }
 
-    /// Cả hai âm đã tổng hợp và nạp thành công.
-    var isReady: Bool { correctPlayer != nil && wrongPlayer != nil }
+    /// Cả ba âm đã tổng hợp và nạp thành công.
+    var isReady: Bool { correctPlayer != nil && wrongPlayer != nil && completePlayer != nil }
 
     func playCorrect() { play(correctPlayer) }
     func playWrong() { play(wrongPlayer) }
+    func playComplete() { play(completePlayer) }
 
     private func play(_ player: AVAudioPlayer?) {
         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
