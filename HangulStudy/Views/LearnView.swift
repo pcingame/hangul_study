@@ -4,6 +4,7 @@ struct LearnView: View {
     let language: AppLanguage
 
     @State private var selectedLetter: HangulLetter?
+    @ObservedObject private var progress = ProgressStore.shared
 
     private let columns = [GridItem(.adaptive(minimum: 76), spacing: 12)]
 
@@ -22,7 +23,8 @@ struct LearnView: View {
                                     Button {
                                         selectedLetter = letter
                                     } label: {
-                                        LetterTile(letter: letter)
+                                        LetterTile(letter: letter,
+                                                   isLearned: progress.entry(for: letter).isLearned)
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -43,6 +45,7 @@ struct LearnView: View {
 
 private struct LetterTile: View {
     let letter: HangulLetter
+    let isLearned: Bool
 
     var body: some View {
         VStack(spacing: 4) {
@@ -55,6 +58,14 @@ private struct LetterTile: View {
         .frame(maxWidth: .infinity)
         .frame(height: 76)
         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+        .overlay(alignment: .topTrailing) {
+            if isLearned {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.tint)
+                    .padding(5)
+            }
+        }
     }
 }
 

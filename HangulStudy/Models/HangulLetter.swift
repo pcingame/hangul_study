@@ -36,4 +36,10 @@ struct HangulLetter: Identifiable, Equatable {
     let exampleMeaning: Bilingual
 
     var id: String { character }
+
+    /// Dạng đọc được cho bộ đọc tiếng Hàn: phần Hangul trong `name`
+    /// (ví dụ "기역" cho ㄱ, "아" cho ㅏ). Đọc jamo rời trực tiếp nghe không tự nhiên.
+    var spoken: String {
+        String(name.prefix { $0 != " " })
+    }
 }

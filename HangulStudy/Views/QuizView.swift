@@ -1,14 +1,68 @@
 import SwiftUI
+import UIKit
 
-private struct QuizQuestion: Identifiable {
+enum QuizMode: CaseIterable, Identifiable {
+    case seeLetter   // nhìn chữ, chọn cách đọc
+    case hearSound   // nghe âm, chọn chữ
+
+    var id: Self { self }
+
+    var label: Bilingual {
+        switch self {
+        case .seeLetter: return L.quizModeSeeLetter
+        case .hearSound: return L.quizModeHearSound
+        }
+    }
+}
+
+enum QuizScope: Identifiable, Hashable {
+    case all
+    case due
+    case category(HangulCategory)
+
+    var id: String {
+        switch self {
+        case .all: return "all"
+        case .due: return "due"
+        case .category(let category): return category.rawValue
+        }
+    }
+
+    static let allChoices: [QuizScope] = [.all, .due] + HangulCategory.allCases.map(QuizScope.category)
+
+    func label(_ language: AppLanguage) -> String {
+        switch self {
+        case .all: return L.quizScopeAll(language)
+        case .due: return L.quizScopeDue(language)
+        case .category(let category): return category.title(language)
+        }
+    }
+
+    @MainActor
+    var pool: [HangulLetter] {
+        switch self {
+        case .all: return HangulData.all
+        case .due: return ProgressStore.shared.dueLetters
+        case .category(let category): return HangulData.letters(in: category)
+        }
+    }
+}
+
+struct QuizQuestion: Identifiable {
     let id = UUID()
     let letter: HangulLetter
+    let mode: QuizMode
     let options: [String]
-    var answer: String { letter.romanization }
+
+    /// Đáp án đúng: cách đọc (seeLetter) hoặc ký tự (hearSound).
+    var answer: String { mode == .seeLetter ? letter.romanization : letter.character }
+
+    /// Nội dung hiển thị cho mỗi lựa chọn.
+    var prompt: Bilingual { mode == .seeLetter ? L.quizPrompt : L.quizPromptHear }
 }
 
 @MainActor
-private final class QuizModel: ObservableObject {
+final class QuizModel: ObservableObject {
     static let questionCount = 10
 
     @Published private(set) var questions: [QuizQuestion] = []
@@ -25,25 +79,41 @@ private final class QuizModel: ObservableObject {
 
     var progressText: String { "\(min(index + 1, questions.count)) / \(questions.count)" }
 
-    func start() {
-        let pool = HangulData.all.shuffled()
-        questions = pool.prefix(Self.questionCount).map { letter in
-            let distractors = HangulData.all
-                .filter { $0.romanization != letter.romanization }
-                .shuffled()
-                .prefix(3)
-                .map(\.romanization)
-            return QuizQuestion(letter: letter, options: ([letter.romanization] + distractors).shuffled())
+    func start(mode: QuizMode, scope: QuizScope) {
+        let pool = scope.pool
+        guard pool.count >= 4 else {
+            questions = []
+            return
+        }
+        let count = min(Self.questionCount, pool.count)
+        questions = pool.shuffled().prefix(count).map { letter in
+            makeQuestion(for: letter, mode: mode, pool: pool)
         }
         index = 0
         score = 0
         selected = nil
     }
 
-    func choose(_ option: String) {
-        guard selected == nil, let current else { return }
+    private func makeQuestion(for letter: HangulLetter, mode: QuizMode, pool: [HangulLetter]) -> QuizQuestion {
+        let correct = mode == .seeLetter ? letter.romanization : letter.character
+        let distractorSource = (pool.count >= 4 ? pool : HangulData.all)
+        let distractors = distractorSource
+            .filter { $0.character != letter.character }
+            .shuffled()
+            .prefix(3)
+            .map { mode == .seeLetter ? $0.romanization : $0.character }
+        return QuizQuestion(letter: letter, mode: mode, options: ([correct] + distractors).shuffled())
+    }
+
+    /// Trả về true nếu chọn đúng.
+    @discardableResult
+    func choose(_ option: String) -> Bool {
+        guard selected == nil, let current else { return false }
         selected = option
-        if option == current.answer { score += 1 }
+        let isCorrect = option == current.answer
+        if isCorrect { score += 1 }
+        ProgressStore.shared.record(current.letter, correct: isCorrect)
+        return isCorrect
     }
 
     func advance() {
@@ -56,6 +126,10 @@ struct QuizView: View {
     let language: AppLanguage
 
     @StateObject private var model = QuizModel()
+    @State private var mode: QuizMode = .seeLetter
+    @State private var scope: QuizScope = .all
+
+    private let haptics = UINotificationFeedbackGenerator()
 
     var body: some View {
         NavigationStack {
@@ -74,19 +148,40 @@ struct QuizView: View {
         }
     }
 
+    // MARK: - Start
+
     private var startScreen: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Image(systemName: "checkmark.circle")
                 .font(.system(size: 64))
                 .foregroundStyle(.tint)
-            Text(L.quizPrompt(language))
-                .font(.title3)
-                .multilineTextAlignment(.center)
-            Button(L.startQuiz(language)) { model.start() }
+
+            Picker(L.quizTitle(language), selection: $mode) {
+                ForEach(QuizMode.allCases) { Text($0.label(language)).tag($0) }
+            }
+            .pickerStyle(.segmented)
+
+            Picker(L.quizScopeLabel(language), selection: $scope) {
+                ForEach(QuizScope.allChoices) { Text($0.label(language)).tag($0) }
+            }
+            .pickerStyle(.menu)
+
+            if scope == .due && ProgressStore.shared.dueLetters.count < 4 {
+                Text(L.quizNothingDue(language))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            Button(L.startQuiz(language)) { model.start(mode: mode, scope: scope) }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .disabled(scope.pool.count < 4)
         }
+        .frame(maxWidth: 420)
     }
+
+    // MARK: - Question
 
     private func questionScreen(_ question: QuizQuestion) -> some View {
         VStack(spacing: 24) {
@@ -94,21 +189,34 @@ struct QuizView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text(question.letter.character)
-                .font(.system(size: 120, weight: .medium))
+            if question.mode == .seeLetter {
+                Text(question.letter.character)
+                    .font(.system(size: 120, weight: .medium))
+            } else {
+                Button {
+                    SpeechService.shared.speak(question.letter)
+                } label: {
+                    Image(systemName: "speaker.wave.3.fill")
+                        .font(.system(size: 72))
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.tint)
+            }
 
-            Text(L.quizPrompt(language))
+            Text(question.prompt(language))
                 .font(.headline)
 
             VStack(spacing: 12) {
                 ForEach(question.options, id: \.self) { option in
                     Button {
-                        model.choose(option)
-                        SpeechService.shared.speak(question.letter.character)
+                        let correct = model.choose(option)
+                        haptics.notificationOccurred(correct ? .success : .error)
+                        SpeechService.shared.speak(question.letter)
                     } label: {
                         Text(option)
+                            .font(question.mode == .hearSound ? .system(size: 34, weight: .medium) : .body)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 6)
+                            .padding(.vertical, question.mode == .hearSound ? 4 : 6)
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.large)
@@ -117,10 +225,12 @@ struct QuizView: View {
                 }
             }
 
-            if model.selected != nil {
-                Text(model.selected == question.answer ? L.correct(language) : "\(L.wrong(language)) — \(question.answer)")
+            if let selected = model.selected {
+                Text(selected == question.answer
+                     ? L.correct(language)
+                     : "\(L.wrong(language)) — \(question.answer)")
                     .font(.headline)
-                    .foregroundStyle(model.selected == question.answer ? .green : .red)
+                    .foregroundStyle(selected == question.answer ? .green : .red)
 
                 Button(model.index + 1 < model.questions.count ? L.nextQuestion(language) : L.seeResult(language)) {
                     model.advance()
@@ -131,6 +241,7 @@ struct QuizView: View {
 
             Spacer()
         }
+        .frame(maxWidth: 420)
     }
 
     private func optionTint(_ option: String, question: QuizQuestion) -> Color {
@@ -140,13 +251,15 @@ struct QuizView: View {
         return .gray
     }
 
+    // MARK: - Result
+
     private var resultScreen: some View {
         VStack(spacing: 16) {
             Text(L.quizDone(language))
                 .font(.largeTitle.bold())
             Text("\(L.score(language)): \(model.score) / \(model.questions.count)")
                 .font(.title2)
-            Button(L.tryAgain(language)) { model.start() }
+            Button(L.tryAgain(language)) { model.start(mode: mode, scope: scope) }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
         }

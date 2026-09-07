@@ -93,4 +93,57 @@ enum L {
         en: "An app to learn the Korean alphabet: flashcards, quizzes, writing practice and pronunciation."
     )
     static let meaning = Bilingual(vi: "Nghĩa", en: "Meaning")
+
+    // Tiến độ
+    static let progress = Bilingual(vi: "Tiến độ", en: "Progress")
+    static let lettersLearned = Bilingual(vi: "Chữ đã thuộc", en: "Letters learned")
+    static let resetProgress = Bilingual(vi: "Xóa tiến độ", en: "Reset progress")
+    static let learned = Bilingual(vi: "Đã thuộc", en: "Learned")
+
+    // Phát âm
+    static let koreanVoiceMissing = Bilingual(
+        vi: "Chưa có giọng tiếng Hàn. Vào Cài đặt iOS ▸ Trợ năng ▸ Nội dung nói ▸ Giọng nói để tải.",
+        en: "No Korean voice installed. Add one in iOS Settings ▸ Accessibility ▸ Spoken Content ▸ Voices."
+    )
+
+    // Onboarding
+    static let onboardNext = Bilingual(vi: "Tiếp tục", en: "Next")
+    static let onboardStart = Bilingual(vi: "Bắt đầu học", en: "Start learning")
+    static let onboard1Title = Bilingual(vi: "Hangul là bảng chữ cái", en: "Hangul is an alphabet")
+    static let onboard1Body = Bilingual(
+        vi: "Không giống chữ Hán, Hangul chỉ có 24 chữ cái cơ bản. Học vài giờ là đọc được.",
+        en: "Unlike Chinese characters, Hangul has just 24 basic letters. A few hours and you can read."
+    )
+    static let onboard2Title = Bilingual(vi: "Ghép thành khối âm tiết", en: "Letters form syllable blocks")
+    static let onboard2Body = Bilingual(
+        vi: "Các chữ cái xếp thành khối: ㄱ + ㅏ → 가. Mỗi khối là một âm tiết.",
+        en: "Letters stack into blocks: ㄱ + ㅏ → 가. Each block is one syllable."
+    )
+    static let onboard3Title = Bilingual(vi: "Nghe và luyện tập", en: "Listen and practice")
+    static let onboard3Body = Bilingual(
+        vi: "Chạm để nghe cách đọc, làm quiz và luyện viết. Tiến độ được lưu và nhắc ôn lại.",
+        en: "Tap to hear pronunciation, take quizzes, practice writing. Progress is saved and scheduled for review."
+    )
+
+    // Quiz
+    static let quizModeSeeLetter = Bilingual(vi: "Nhìn chữ", en: "See letter")
+    static let quizModeHearSound = Bilingual(vi: "Nghe âm", en: "Hear sound")
+    static let quizScopeAll = Bilingual(vi: "Tất cả", en: "All")
+    static let quizScopeDue = Bilingual(vi: "Cần ôn", en: "Due for review")
+    static let quizPromptHear = Bilingual(vi: "Đây là chữ nào?", en: "Which letter is this?")
+    static let quizPlaySound = Bilingual(vi: "Nghe lại", en: "Play again")
+    static let quizNothingDue = Bilingual(vi: "Không có chữ nào cần ôn. Quay lại sau nhé!", en: "Nothing to review right now. Come back later!")
+    static let quizScopeLabel = Bilingual(vi: "Phạm vi", en: "Scope")
+
+    // Ghép chữ
+    static let buildTab = Bilingual(vi: "Ghép chữ", en: "Build")
+    static let buildTitle = Bilingual(vi: "Ghép âm tiết", en: "Build a syllable")
+    static let buildInitial = Bilingual(vi: "Phụ âm đầu", en: "Initial consonant")
+    static let buildMedial = Bilingual(vi: "Nguyên âm", en: "Vowel")
+    static let buildFinal = Bilingual(vi: "Phụ âm cuối", en: "Final consonant")
+    static let buildNoFinal = Bilingual(vi: "Không", en: "None")
+    static let listenSyllable = Bilingual(vi: "Nghe âm tiết", en: "Listen to syllable")
+
+    // Luyện viết
+    static let showStrokes = Bilingual(vi: "Xem cách viết", en: "Show strokes")
 }

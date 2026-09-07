@@ -16,11 +16,18 @@ struct LetterDetailView: View {
                         .padding(.top, 12)
 
                     Button {
-                        SpeechService.shared.speak(letter.character)
+                        SpeechService.shared.speak(letter)
                     } label: {
                         Label(L.listenLetter(language), systemImage: "speaker.wave.2.fill")
                     }
                     .buttonStyle(.borderedProminent)
+
+                    if !SpeechService.shared.isKoreanVoiceAvailable {
+                        Text(L.koreanVoiceMissing(language))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
 
                     VStack(spacing: 0) {
                         infoRow(title: L.romanization(language), value: letter.romanization)

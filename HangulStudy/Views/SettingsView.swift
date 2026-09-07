@@ -4,6 +4,8 @@ struct SettingsView: View {
     @AppStorage("appLanguage") private var languageRaw = AppLanguage.vi.rawValue
     @AppStorage("appAppearance") private var appearanceRaw = AppAppearance.system.rawValue
 
+    @ObservedObject private var progress = ProgressStore.shared
+
     private var language: AppLanguage {
         AppLanguage(rawValue: languageRaw) ?? .vi
     }
@@ -11,6 +13,14 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section(L.progress(language)) {
+                    LabeledContent(L.lettersLearned(language),
+                                   value: "\(progress.learnedCount) / \(HangulData.all.count)")
+                    Button(L.resetProgress(language), role: .destructive) {
+                        progress.reset()
+                    }
+                }
+
                 Section(L.language(language)) {
                     Picker(L.language(language), selection: $languageRaw) {
                         ForEach(AppLanguage.allCases) { lang in

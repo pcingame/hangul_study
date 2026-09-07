@@ -8,6 +8,7 @@ struct WritingPracticeView: View {
     @State private var index = 0
     @State private var canvasView = PKCanvasView()
     @State private var showGuide = true
+    @State private var strokeReplay = 0
 
     private var letter: HangulLetter { letters[index] }
 
@@ -26,7 +27,7 @@ struct WritingPracticeView: View {
                     }
                     Spacer()
                     Button {
-                        SpeechService.shared.speak(letter.character)
+                        SpeechService.shared.speak(letter)
                     } label: {
                         Image(systemName: "speaker.wave.2.fill")
                             .font(.title2)
@@ -48,6 +49,12 @@ struct WritingPracticeView: View {
                             .foregroundStyle(.tertiary)
                     }
 
+                    if strokeReplay > 0 {
+                        StrokeOrderView(character: letter.character)
+                            .id("\(letter.character)-\(strokeReplay)")
+                            .padding(24)
+                    }
+
                     DrawingCanvas(canvasView: canvasView)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
@@ -55,25 +62,37 @@ struct WritingPracticeView: View {
                 .aspectRatio(1, contentMode: .fit)
                 .padding(.horizontal)
 
-                HStack(spacing: 12) {
-                    Toggle(L.showGuide(language), isOn: $showGuide)
-                        .toggleStyle(.button)
+                VStack(spacing: 10) {
+                    HStack(spacing: 12) {
+                        Toggle(L.showGuide(language), isOn: $showGuide)
+                            .toggleStyle(.button)
+                            .buttonStyle(.bordered)
+
+                        Button {
+                            strokeReplay += 1
+                        } label: {
+                            Label(L.showStrokes(language), systemImage: "play.circle")
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    HStack(spacing: 12) {
+                        Button {
+                            canvasView.drawing = PKDrawing()
+                        } label: {
+                            Label(L.clear(language), systemImage: "eraser")
+                        }
                         .buttonStyle(.bordered)
 
-                    Button {
-                        canvasView.drawing = PKDrawing()
-                    } label: {
-                        Label(L.clear(language), systemImage: "eraser")
+                        Button {
+                            canvasView.drawing = PKDrawing()
+                            strokeReplay = 0
+                            index = (index + 1) % letters.count
+                        } label: {
+                            Label(L.nextLetter(language), systemImage: "arrow.right")
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.bordered)
-
-                    Button {
-                        canvasView.drawing = PKDrawing()
-                        index = (index + 1) % letters.count
-                    } label: {
-                        Label(L.nextLetter(language), systemImage: "arrow.right")
-                    }
-                    .buttonStyle(.borderedProminent)
                 }
                 .padding(.horizontal)
 
