@@ -28,6 +28,11 @@ final class SoundEffects {
     /// Cả ba âm đã tổng hợp và nạp thành công.
     var isReady: Bool { correctPlayer != nil && wrongPlayer != nil && completePlayer != nil }
 
+    /// Độ dài từng âm (giây) — dùng để kiểm thử.
+    var durations: (correct: TimeInterval, wrong: TimeInterval, complete: TimeInterval) {
+        (correctPlayer?.duration ?? 0, wrongPlayer?.duration ?? 0, completePlayer?.duration ?? 0)
+    }
+
     func playCorrect() { play(correctPlayer) }
     func playWrong() { play(wrongPlayer) }
     func playComplete() { play(completePlayer) }

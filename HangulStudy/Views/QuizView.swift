@@ -39,10 +39,10 @@ enum QuizScope: Identifiable, Hashable {
     }
 
     @MainActor
-    var pool: [HangulLetter] {
+    func pool(using store: ProgressStore = .shared) -> [HangulLetter] {
         switch self {
         case .all: return HangulData.all
-        case .due: return ProgressStore.shared.dueLetters
+        case .due: return store.dueLetters
         case .category(let category): return HangulData.letters(in: category)
         }
     }
@@ -70,6 +70,12 @@ final class QuizModel: ObservableObject {
     @Published private(set) var score = 0
     @Published private(set) var selected: String?
 
+    private let progress: ProgressStore
+
+    init(progress: ProgressStore = .shared) {
+        self.progress = progress
+    }
+
     var current: QuizQuestion? {
         guard index < questions.count else { return nil }
         return questions[index]
@@ -80,7 +86,7 @@ final class QuizModel: ObservableObject {
     var progressText: String { "\(min(index + 1, questions.count)) / \(questions.count)" }
 
     func start(mode: QuizMode, scope: QuizScope) {
-        let pool = scope.pool
+        let pool = scope.pool(using: progress)
         guard pool.count >= 4 else {
             questions = []
             return
@@ -112,7 +118,7 @@ final class QuizModel: ObservableObject {
         selected = option
         let isCorrect = option == current.answer
         if isCorrect { score += 1 }
-        ProgressStore.shared.record(current.letter, correct: isCorrect)
+        progress.record(current.letter, correct: isCorrect)
         return isCorrect
     }
 
@@ -181,7 +187,7 @@ struct QuizView: View {
             Button(L.startQuiz(language)) { model.start(mode: mode, scope: scope) }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled(scope.pool.count < 4)
+                .disabled(scope.pool().count < 4)
         }
         .frame(maxWidth: 420)
     }
