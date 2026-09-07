@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hỗ trợ — Hangul Study</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1c1c1e;
+    --muted: #6b6b70;
+    --accent: #c94f8b;
+    --card: #f6f6f7;
+    --border: #e5e5e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121213;
+      --fg: #f2f2f5;
+      --muted: #9a9aa0;
+      --accent: #e76fa3;
+      --card: #1d1d1f;
+      --border: #303033;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 22px 80px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 34px 0 8px; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  .lang-note { color: var(--muted); font-size: .9rem; margin-bottom: 28px; }
+  a { color: var(--accent); }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 44px 0; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 18px 0;
+  }
+  details {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 10px 0 2px; color: var(--fg); }
+  ol, ul { padding-left: 22px; }
+  li { margin: 5px 0; }
+  footer { margin-top: 50px; color: var(--muted); font-size: .88rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Hỗ trợ Hangul Study</h1>
+  <p class="lang-note"><a href="#en">English below</a></p>
+
+  <p>Hangul Study là ứng dụng học bảng chữ cái tiếng Hàn: thẻ học 40 chữ cái, ghép âm tiết,
+  kiểm tra trắc nghiệm, luyện viết theo nét, và phát âm. Toàn bộ hoạt động ngoại tuyến, tiến độ lưu trên máy.</p>
+
+  <div class="card">
+    Cần giúp đỡ? Gửi email tới
+    <a href="mailto:phuongtdoan2008@gmail.com">phuongtdoan2008@gmail.com</a> —
+    thường phản hồi trong 2–3 ngày.
+  </div>
+
+  <h2>Câu hỏi thường gặp</h2>
+
+  <details>
+    <summary>Tôi không nghe được phần phát âm</summary>
+    <p>Ứng dụng dùng giọng đọc tiếng Hàn của hệ thống. Nếu máy chưa cài giọng đó, phần nghe sẽ im lặng. Cách thêm:</p>
+    <ol>
+      <li>Mở <strong>Cài đặt</strong> của iPhone</li>
+      <li>Vào <strong>Trợ năng ▸ Nội dung nói ▸ Giọng nói</strong></li>
+      <li>Chọn <strong>Tiếng Hàn / 한국어</strong> và tải về một giọng</li>
+    </ol>
+    <p>Ngoài ra, kiểm tra nút gạt im lặng và âm lượng của máy.</p>
+  </details>
+
+  <details>
+    <summary>Làm sao xóa tiến độ học?</summary>
+    <p>Mở tab <strong>Cài đặt</strong> trong ứng dụng ▸ bấm <strong>"Xóa tiến độ"</strong>. Thao tác này không thể hoàn tác.</p>
+  </details>
+
+  <details>
+    <summary>Khi nào một chữ được tính là "đã thuộc"?</summary>
+    <p>Ứng dụng dùng phương pháp lặp lại ngắt quãng (Leitner). Một chữ được đánh dấu đã thuộc sau khi bạn
+    trả lời đúng nó nhiều lần trong phần Kiểm tra; trả lời sai sẽ đưa chữ đó quay lại lịch ôn sớm hơn.</p>
+  </details>
+
+  <details>
+    <summary>Đổi ngôn ngữ giao diện hoặc chế độ sáng/tối</summary>
+    <p>Tab <strong>Cài đặt</strong> ▸ mục <strong>Ngôn ngữ</strong> (Tiếng Việt / English) và
+    <strong>Giao diện</strong> (Sáng / Tối / Theo hệ thống).</p>
+  </details>
+
+  <details>
+    <summary>Ứng dụng có cần Internet không?</summary>
+    <p>Không. Hangul Study chạy hoàn toàn ngoại tuyến và không gửi dữ liệu đi đâu.</p>
+  </details>
+
+  <details>
+    <summary>Yêu cầu thiết bị</summary>
+    <p>iPhone chạy iOS 17.0 trở lên.</p>
+  </details>
+
+  <h2>Quyền riêng tư</h2>
+  <p>Xem <a href="./privacy.html">Chính sách quyền riêng tư</a>. Tóm tắt: ứng dụng không thu thập dữ liệu nào.</p>
+
+  <hr>
+
+  <h1 id="en">Hangul Study Support</h1>
+
+  <p>Hangul Study helps you learn the Korean alphabet: flashcards for all 40 letters, syllable building,
+  multiple-choice quizzes, stroke-order writing practice, and pronunciation. It works fully offline;
+  progress is stored on your device.</p>
+
+  <div class="card">
+    Need help? Email <a href="mailto:phuongtdoan2008@gmail.com">phuongtdoan2008@gmail.com</a> —
+    typical reply within 2–3 days.
+  </div>
+
+  <h2>FAQ</h2>
+
+  <details>
+    <summary>I can't hear any pronunciation</summary>
+    <p>The app uses your system's Korean text-to-speech voice. If no Korean voice is installed, playback is silent. To add one:</p>
+    <ol>
+      <li>Open the iPhone <strong>Settings</strong> app</li>
+      <li>Go to <strong>Accessibility ▸ Spoken Content ▸ Voices</strong></li>
+      <li>Choose <strong>Korean / 한국어</strong> and download a voice</li>
+    </ol>
+    <p>Also check the silent switch and the volume level.</p>
+  </details>
+
+  <details>
+    <summary>How do I reset my progress?</summary>
+    <p>Open the <strong>Settings</strong> tab in the app ▸ tap <strong>"Reset progress"</strong>. This cannot be undone.</p>
+  </details>
+
+  <details>
+    <summary>When does a letter count as "learned"?</summary>
+    <p>The app uses Leitner spaced repetition. A letter is marked learned after several correct quiz answers;
+    a wrong answer moves it back to an earlier review slot.</p>
+  </details>
+
+  <details>
+    <summary>Change interface language or light/dark mode</summary>
+    <p><strong>Settings</strong> tab ▸ <strong>Language</strong> (Tiếng Việt / English) and
+    <strong>Appearance</strong> (Light / Dark / System).</p>
+  </details>
+
+  <details>
+    <summary>Does the app need an Internet connection?</summary>
+    <p>No. Hangul Study runs entirely offline and sends no data anywhere.</p>
+  </details>
+
+  <details>
+    <summary>Device requirements</summary>
+    <p>iPhone running iOS 17.0 or later.</p>
+  </details>
+
+  <h2>Privacy</h2>
+  <p>See the <a href="./privacy.html">Privacy Policy</a>. In short: the app collects no data.</p>
+
+  <footer>
+    Hangul Study — <a href="./privacy.html">Chính sách quyền riêng tư / Privacy Policy</a>
+  </footer>
+
+</div>
+</body>
+</html>

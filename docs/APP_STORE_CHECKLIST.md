@@ -108,9 +108,12 @@ App không dùng mã hóa nào ngoài của hệ thống → khai báo sẵn đ�
 - [ ] **Description**: mô tả tính năng (Học / Ghép chữ / Kiểm tra / Luyện viết / Phát âm / Lặp lại ngắt quãng / Song ngữ). Có thể lấy từ phần "Tính năng" trong `README.md`.
 - [ ] **Keywords** (≤ 100 ký tự, phân tách bằng dấu phẩy): ví dụ `hangul,tiếng hàn,korean,bảng chữ cái,học tiếng hàn,phát âm,luyện viết,alphabet`
 - [ ] **Promotional text** (tuỳ chọn, ≤ 170 ký tự)
-- [ ] **Support URL**: bắt buộc — 1 trang web bất kỳ có thông tin liên hệ (GitHub repo / trang GitHub Pages đều được)
-- [ ] **Marketing URL**: tuỳ chọn
-- [ ] **Privacy Policy URL**: **bắt buộc** kể cả khi không thu thập dữ liệu. Tự host 1 trang đơn giản (GitHub Pages) ghi rõ "App không thu thập, không truyền dữ liệu cá nhân; tiến độ học chỉ lưu trên máy."
+- [x] **Trang Privacy + Support đã tạo**: `docs/index.html`, `docs/privacy.html`, `docs/support.html` (song ngữ VI/EN, email `phuongtdoan2008@gmail.com`).
+- [ ] **Bật GitHub Pages**: repo ▸ Settings ▸ Pages ▸ Source = "Deploy from a branch" ▸ Branch = `main`, thư mục `/docs` ▸ Save. Chờ ~1 phút.
+  - Privacy Policy URL → `https://pcingame.github.io/hangul_study/privacy.html`
+  - Support URL → `https://pcingame.github.io/hangul_study/support.html`
+  - Kiểm tra 2 URL mở được trước khi điền vào App Store Connect
+- [ ] **Marketing URL**: tuỳ chọn (có thể dùng `https://pcingame.github.io/hangul_study/`)
 - [ ] **Copyright**: ví dụ `2026 <tên bạn>`
 - [ ] **Ngôn ngữ localizations**: thêm cả Vietnamese và English nếu muốn hiển thị metadata song ngữ
 
@@ -207,6 +210,6 @@ xcrun altool --upload-app -f build/export/HangulStudy.ipa -t ios \
 
 Còn cần bạn làm thủ công (ngoài code):
 
-6. **Privacy Policy URL + Support URL** — cần host (mục 6).
+6. **Bật GitHub Pages** cho thư mục `/docs` trên `main` (trang Privacy + Support đã tạo sẵn — mục 6).
 7. **Bộ screenshot iPhone 6.9"** — chụp bằng Simulator.
 8. **Trang App Store Connect** — metadata, App Privacy label, age rating, upload build.

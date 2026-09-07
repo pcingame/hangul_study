@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hangul Study</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
+    --accent: #c94f8b; --card: #f6f6f7; --border: #e5e5e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121213; --fg: #f2f2f5; --muted: #9a9aa0;
+      --accent: #e76fa3; --card: #1d1d1f; --border: #303033;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; min-height: 100vh; align-items: center; justify-content: center;
+  }
+  .wrap { max-width: 460px; padding: 40px 24px; text-align: center; }
+  .badge {
+    width: 88px; height: 88px; border-radius: 20px; margin: 0 auto 20px;
+    background: linear-gradient(135deg, #e98cbb, #c94f8b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; color: #fff; font-weight: 600;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  p { color: var(--muted); margin: 0 0 24px; }
+  a.link {
+    display: block; padding: 14px 18px; margin: 10px 0;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    color: var(--accent); text-decoration: none; font-weight: 600;
+  }
+  a.link:hover { border-color: var(--accent); }
+  footer { margin-top: 22px; font-size: .85rem; color: var(--muted); }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">가</div>
+  <h1>Hangul Study</h1>
+  <p>Học bảng chữ cái tiếng Hàn · Learn the Korean alphabet</p>
+
+  <a class="link" href="./privacy.html">Chính sách quyền riêng tư / Privacy Policy</a>
+  <a class="link" href="./support.html">Hỗ trợ / Support</a>
+
+  <footer><a href="https://github.com/pcingame/hangul_study">Mã nguồn trên GitHub</a></footer>
+</div>
+</body>
+</html>
