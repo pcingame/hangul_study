@@ -1,24 +1,42 @@
 import SwiftUI
 import CoreText
 
-/// Tách đường viền glyph của một ký tự thành các nét (contour) rời,
-/// chuẩn hoá vào ô đơn vị 0…1 với trục y hướng xuống (giống toạ độ SwiftUI).
-///
-/// Kết quả được cache: chỉ có 40 chữ cái và việc trích xuất path bằng CoreText
-/// không rẻ, nên mỗi ký tự chỉ tính một lần.
-@MainActor
-enum GlyphPath {
-    private static let font = CTFontCreateWithName("AppleSDGothicNeo-Bold" as CFString, 100, nil)
-    private static var cache: [String: [Path]] = [:]
+/// Tập nét của một chữ cái để minh hoạ cách viết, đã chuẩn hoá vào ô 0…1.
+struct StrokeGuide {
+    let strokes: [Path]
+    /// Bề rộng bút, theo tỉ lệ so với cạnh ô vẽ.
+    let widthFraction: CGFloat
+}
 
-    static func strokes(for character: String) -> [Path] {
+/// Nguồn nét cho `StrokeOrderView`: ưu tiên dữ liệu viết tay (đường trung tâm,
+/// đúng thứ tự) cho 24 chữ cơ bản; các chữ khác lấy đường viền glyph của font.
+@MainActor
+enum StrokeSource {
+    private static let font = CTFontCreateWithName("AppleSDGothicNeo-Bold" as CFString, 100, nil)
+    private static var cache: [String: StrokeGuide] = [:]
+
+    static func guide(for character: String) -> StrokeGuide {
         if let cached = cache[character] { return cached }
-        let result = extract(character)
-        cache[character] = result
-        return result
+        let guide: StrokeGuide
+        if let manual = HangulStrokes.strokes(for: character) {
+            guide = StrokeGuide(strokes: manual.map(polyline), widthFraction: 0.11)
+        } else {
+            guide = StrokeGuide(strokes: contours(of: character), widthFraction: 0.05)
+        }
+        cache[character] = guide
+        return guide
     }
 
-    private static func extract(_ character: String) -> [Path] {
+    private static func polyline(_ points: [CGPoint]) -> Path {
+        var path = Path()
+        guard let first = points.first else { return path }
+        path.move(to: first)
+        for point in points.dropFirst() { path.addLine(to: point) }
+        return path
+    }
+
+    /// Tách đường viền glyph thành các contour rời, chuẩn hoá vào ô 0…1 (y hướng xuống).
+    private static func contours(of character: String) -> [Path] {
         guard let scalar = character.unicodeScalars.first else { return [] }
 
         var glyph: CGGlyph = 0
@@ -26,7 +44,6 @@ enum GlyphPath {
         guard CTFontGetGlyphsForCharacters(font, &unichars, &glyph, unichars.count),
               let cgPath = CTFontCreatePathForGlyph(font, glyph, nil) else { return [] }
 
-        // Bao toàn bộ path để chuẩn hoá tỉ lệ.
         let box = cgPath.boundingBoxOfPath
         guard box.width > 0, box.height > 0 else { return [] }
         let scale = 1 / max(box.width, box.height)
@@ -36,12 +53,11 @@ enum GlyphPath {
         func normalize(_ p: CGPoint) -> CGPoint {
             let x = (p.x - box.minX) * scale + offsetX
             let y = (p.y - box.minY) * scale + offsetY
-            return CGPoint(x: x, y: 1 - y) // lật trục y
+            return CGPoint(x: x, y: 1 - y)
         }
 
         var strokes: [Path] = []
         var current = Path()
-
         cgPath.applyWithBlock { elementPtr in
             let element = elementPtr.pointee
             switch element.type {
@@ -52,8 +68,7 @@ enum GlyphPath {
             case .addLineToPoint:
                 current.addLine(to: normalize(element.points[0]))
             case .addQuadCurveToPoint:
-                current.addQuadCurve(to: normalize(element.points[1]),
-                                     control: normalize(element.points[0]))
+                current.addQuadCurve(to: normalize(element.points[1]), control: normalize(element.points[0]))
             case .addCurveToPoint:
                 current.addCurve(to: normalize(element.points[2]),
                                  control1: normalize(element.points[0]),
@@ -70,64 +85,67 @@ enum GlyphPath {
 }
 
 private struct NormalizedShape: Shape {
-    let normalized: Path
+    var normalized: Path
     func path(in rect: CGRect) -> Path {
         normalized.applying(CGAffineTransform(scaleX: rect.width, y: rect.height))
     }
 }
 
-/// Vẽ từng nét của một chữ cái lần lượt như bút đang viết: nét đang vẽ
-/// được "kéo" dọc theo đường viền, vẽ xong thì tô đặc rồi sang nét kế.
+/// Vẽ từng nét của một chữ cái lần lượt như bút đang viết: nét đang vẽ được
+/// "kéo" dọc theo đường của nó (`.trim`), vẽ xong thì đứng yên và sang nét kế.
 /// Tăng `token` (hoặc chạm vào view) để phát lại.
 struct StrokeOrderView: View {
     let character: String
     var token: Int = 0
 
-    /// Số nét đã vẽ xong (đang tô đặc).
+    /// Số nét đã vẽ xong.
     @State private var completed = 0
-    /// Tiến độ 0…1 của nét đang được vẽ.
+    /// Tiến độ 0…1 của nét đang vẽ.
     @State private var tracing: CGFloat = 0
     @State private var localReplay = 0
 
-    private var strokes: [Path] { GlyphPath.strokes(for: character) }
+    private var guide: StrokeGuide { StrokeSource.guide(for: character) }
 
     var body: some View {
-        ZStack {
-            ForEach(strokes.indices, id: \.self) { index in
-                if index < completed {
-                    NormalizedShape(normalized: strokes[index])
-                        .fill(Color.accentColor)
-                } else if index == completed {
-                    NormalizedShape(normalized: strokes[index])
-                        .trim(from: 0, to: tracing)
-                        .stroke(Color.accentColor,
-                                style: StrokeStyle(lineWidth: 8, lineCap: .round, lineJoin: .round))
-                } else {
-                    NormalizedShape(normalized: strokes[index])
-                        .fill(Color.accentColor)
-                        .opacity(0.12)
+        GeometryReader { geo in
+            let lineWidth = min(geo.size.width, geo.size.height) * guide.widthFraction
+            let style = StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round)
+
+            ZStack {
+                ForEach(guide.strokes.indices, id: \.self) { index in
+                    NormalizedShape(normalized: guide.strokes[index])
+                        .stroke(Color.accentColor.opacity(0.12), style: style)
+                }
+                ForEach(guide.strokes.indices, id: \.self) { index in
+                    NormalizedShape(normalized: guide.strokes[index])
+                        .trim(from: 0, to: progress(index))
+                        .stroke(Color.accentColor, style: style)
                 }
             }
         }
+        .aspectRatio(1, contentMode: .fit)
         .contentShape(Rectangle())
         .onTapGesture { localReplay += 1 }
-        .task(id: "\(character)#\(token)#\(localReplay)") {
-            await animate()
-        }
+        .task(id: "\(character)#\(token)#\(localReplay)") { await animate() }
+    }
+
+    private func progress(_ index: Int) -> CGFloat {
+        if index < completed { return 1 }
+        if index == completed { return tracing }
+        return 0
     }
 
     private func animate() async {
-        let count = strokes.count
+        let count = guide.strokes.count
         completed = 0
         tracing = 0
         guard count > 0 else { return }
 
-        let traceDuration = 0.5
-
         for index in 0..<count {
             tracing = 0
-            withAnimation(.easeInOut(duration: traceDuration)) { tracing = 1 }
-            try? await Task.sleep(for: .seconds(traceDuration))
+            let duration = traceDuration(for: guide.strokes[index])
+            withAnimation(.easeInOut(duration: duration)) { tracing = 1 }
+            try? await Task.sleep(for: .seconds(duration))
             guard !Task.isCancelled else { return }
 
             completed = index + 1
@@ -136,9 +154,17 @@ struct StrokeOrderView: View {
             guard !Task.isCancelled else { return }
         }
     }
+
+    /// Nét nhiều đoạn (vòng tròn) được vẽ chậm hơn nét thẳng.
+    private func traceDuration(for path: Path) -> TimeInterval {
+        var segments = 0
+        path.forEach { _ in segments += 1 }
+        return min(0.9, 0.3 + 0.03 * Double(segments))
+    }
 }
 
 #Preview {
-    StrokeOrderView(character: "ㅁ")
-        .frame(width: 200, height: 200)
+    StrokeOrderView(character: "ㅂ")
+        .frame(width: 240, height: 240)
+        .padding()
 }

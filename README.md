@@ -22,7 +22,7 @@
 - **Học** — lưới 40 chữ cái chia theo nhóm (phụ âm / nguyên âm cơ bản, phụ âm đôi, nguyên âm ghép). Chạm vào chữ để xem tên chữ, cách đọc, từ ví dụ kèm nghĩa. Chữ đã thuộc được đánh dấu.
 - **Ghép chữ** — chọn phụ âm đầu + nguyên âm + batchim để tạo khối âm tiết (가, 각, 한…) và nghe cách đọc.
 - **Kiểm tra** — trắc nghiệm với 2 chế độ (nhìn chữ → chọn âm, hoặc nghe âm → chọn chữ), lọc theo nhóm hoặc "chữ cần ôn". Có haptic, chấm điểm, và ghi lại tiến độ.
-- **Luyện viết** — viết chữ bằng ngón tay hoặc Apple Pencil (PencilKit) theo nét mờ mẫu; nút "Xem cách viết" minh hoạ các nét lần lượt.
+- **Luyện viết** — viết chữ bằng ngón tay hoặc Apple Pencil (PencilKit) theo nét mờ mẫu; nút "Xem cách viết" chạy hoạt hình bút vẽ từng nét đúng thứ tự (dữ liệu nét viết tay cho 24 chữ cơ bản; các chữ còn lại lấy từ đường viền font).
 - **Phát âm** — nghe cách đọc từng chữ (đọc theo tên chữ / âm tiết, không phải jamo rời) và từ ví dụ, bằng giọng `ko-KR` của hệ thống. Cảnh báo nếu máy chưa cài giọng tiếng Hàn.
 - **Tiến độ + lặp lại ngắt quãng** — mỗi lần trả lời quiz được lưu theo phương pháp Leitner; app lên lịch ôn lại các chữ hay sai. Xem số chữ đã thuộc và xóa tiến độ trong Cài đặt.
 - **Song ngữ + sáng/tối** — chuyển giao diện Tiếng Việt ⇄ English, và Sáng / Tối / Theo hệ thống.
@@ -55,6 +55,7 @@ HangulStudy/
 │   ├── HangulLetter.swift        Model một chữ cái
 │   ├── HangulData.swift          Dữ liệu 40 chữ cái + từ ví dụ
 │   ├── HangulSyllable.swift      Ghép jamo thành khối âm tiết Unicode
+│   ├── HangulStrokes.swift       Nét viết tay (centerline, đúng thứ tự) cho 24 chữ cơ bản
 │   └── ProgressStore.swift       Lưu tiến độ + lịch ôn (Leitner)
 ├── Services/
 │   └── SpeechService.swift       Phát âm ko-KR bằng AVSpeechSynthesizer
@@ -66,7 +67,7 @@ HangulStudy/
     ├── SyllableBuilderView.swift Ghép âm tiết
     ├── QuizView.swift            Trắc nghiệm 2 chế độ + phạm vi + SRS
     ├── WritingPracticeView.swift Luyện viết bằng PencilKit
-    ├── StrokeOrderView.swift     Minh hoạ nét viết từ path glyph
+    ├── StrokeOrderView.swift     Hoạt hình bút vẽ từng nét (.trim); ưu tiên HangulStrokes, fallback path glyph
     └── SettingsView.swift        Tiến độ + ngôn ngữ + giao diện
 
 HangulStudyTests/                 Swift Testing: HangulData, QuizModel, ProgressStore, HangulSyllable
