@@ -3,11 +3,24 @@ import CoreText
 
 /// Tách đường viền glyph của một ký tự thành các nét (contour) rời,
 /// chuẩn hoá vào ô đơn vị 0…1 với trục y hướng xuống (giống toạ độ SwiftUI).
+///
+/// Kết quả được cache: chỉ có 40 chữ cái và việc trích xuất path bằng CoreText
+/// không rẻ, nên mỗi ký tự chỉ tính một lần.
+@MainActor
 enum GlyphPath {
+    private static let font = CTFontCreateWithName("AppleSDGothicNeo-Bold" as CFString, 100, nil)
+    private static var cache: [String: [Path]] = [:]
+
     static func strokes(for character: String) -> [Path] {
+        if let cached = cache[character] { return cached }
+        let result = extract(character)
+        cache[character] = result
+        return result
+    }
+
+    private static func extract(_ character: String) -> [Path] {
         guard let scalar = character.unicodeScalars.first else { return [] }
 
-        let font = CTFontCreateWithName("AppleSDGothicNeo-Bold" as CFString, 100, nil)
         var glyph: CGGlyph = 0
         var unichars = Array(String(scalar).utf16)
         guard CTFontGetGlyphsForCharacters(font, &unichars, &glyph, unichars.count),
@@ -64,16 +77,15 @@ private struct NormalizedShape: Shape {
 }
 
 /// Hiện các nét của một chữ cái lần lượt để minh hoạ cách viết.
+/// Tăng `token` (hoặc chạm vào view) để phát lại.
 struct StrokeOrderView: View {
     let character: String
+    var token: Int = 0
 
     @State private var shown = 0
-    private let strokes: [Path]
+    @State private var localReplay = 0
 
-    init(character: String) {
-        self.character = character
-        self.strokes = GlyphPath.strokes(for: character)
-    }
+    private var strokes: [Path] { GlyphPath.strokes(for: character) }
 
     var body: some View {
         ZStack {
@@ -83,17 +95,21 @@ struct StrokeOrderView: View {
                     .opacity(index < shown ? 1 : 0.12)
             }
         }
-        .onAppear(perform: play)
-        .onTapGesture(perform: play)
+        .contentShape(Rectangle())
+        .onTapGesture { localReplay += 1 }
+        .task(id: "\(character)#\(token)#\(localReplay)") {
+            await animate()
+        }
     }
 
-    private func play() {
+    private func animate() async {
         shown = 0
-        guard !strokes.isEmpty else { return }
-        for index in 1...strokes.count {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.4) {
-                withAnimation(.easeOut(duration: 0.3)) { shown = index }
-            }
+        let count = strokes.count
+        guard count > 0 else { return }
+        for index in 1...count {
+            try? await Task.sleep(for: .seconds(0.4))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.3)) { shown = index }
         }
     }
 }

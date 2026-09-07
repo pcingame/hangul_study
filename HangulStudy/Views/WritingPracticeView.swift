@@ -50,8 +50,7 @@ struct WritingPracticeView: View {
                     }
 
                     if strokeReplay > 0 {
-                        StrokeOrderView(character: letter.character)
-                            .id("\(letter.character)-\(strokeReplay)")
+                        StrokeOrderView(character: letter.character, token: strokeReplay)
                             .padding(24)
                     }
 
