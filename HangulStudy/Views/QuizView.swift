@@ -220,6 +220,11 @@ struct QuizView: View {
                         Button {
                             let correct = model.choose(option)
                             haptics.notificationOccurred(correct ? .success : .error)
+                            if correct {
+                                SoundEffects.shared.playCorrect()
+                            } else {
+                                SoundEffects.shared.playWrong()
+                            }
                             SpeechService.shared.speak(question.letter)
                         } label: {
                             Text(option)
