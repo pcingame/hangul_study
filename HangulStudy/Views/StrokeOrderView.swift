@@ -76,13 +76,17 @@ private struct NormalizedShape: Shape {
     }
 }
 
-/// Hiện các nét của một chữ cái lần lượt để minh hoạ cách viết.
+/// Vẽ từng nét của một chữ cái lần lượt như bút đang viết: nét đang vẽ
+/// được "kéo" dọc theo đường viền, vẽ xong thì tô đặc rồi sang nét kế.
 /// Tăng `token` (hoặc chạm vào view) để phát lại.
 struct StrokeOrderView: View {
     let character: String
     var token: Int = 0
 
-    @State private var shown = 0
+    /// Số nét đã vẽ xong (đang tô đặc).
+    @State private var completed = 0
+    /// Tiến độ 0…1 của nét đang được vẽ.
+    @State private var tracing: CGFloat = 0
     @State private var localReplay = 0
 
     private var strokes: [Path] { GlyphPath.strokes(for: character) }
@@ -90,9 +94,19 @@ struct StrokeOrderView: View {
     var body: some View {
         ZStack {
             ForEach(strokes.indices, id: \.self) { index in
-                NormalizedShape(normalized: strokes[index])
-                    .fill(Color.accentColor)
-                    .opacity(index < shown ? 1 : 0.12)
+                if index < completed {
+                    NormalizedShape(normalized: strokes[index])
+                        .fill(Color.accentColor)
+                } else if index == completed {
+                    NormalizedShape(normalized: strokes[index])
+                        .trim(from: 0, to: tracing)
+                        .stroke(Color.accentColor,
+                                style: StrokeStyle(lineWidth: 8, lineCap: .round, lineJoin: .round))
+                } else {
+                    NormalizedShape(normalized: strokes[index])
+                        .fill(Color.accentColor)
+                        .opacity(0.12)
+                }
             }
         }
         .contentShape(Rectangle())
@@ -103,13 +117,23 @@ struct StrokeOrderView: View {
     }
 
     private func animate() async {
-        shown = 0
         let count = strokes.count
+        completed = 0
+        tracing = 0
         guard count > 0 else { return }
-        for index in 1...count {
-            try? await Task.sleep(for: .seconds(0.4))
+
+        let traceDuration = 0.5
+
+        for index in 0..<count {
+            tracing = 0
+            withAnimation(.easeInOut(duration: traceDuration)) { tracing = 1 }
+            try? await Task.sleep(for: .seconds(traceDuration))
             guard !Task.isCancelled else { return }
-            withAnimation(.easeOut(duration: 0.3)) { shown = index }
+
+            completed = index + 1
+            tracing = 0
+            try? await Task.sleep(for: .seconds(0.12))
+            guard !Task.isCancelled else { return }
         }
     }
 }

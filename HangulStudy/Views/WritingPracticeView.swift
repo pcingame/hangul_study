@@ -43,15 +43,13 @@ struct WritingPracticeView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color(.secondarySystemBackground))
 
-                    if showGuide {
-                        Text(letter.character)
-                            .font(.system(size: 240, weight: .medium))
-                            .foregroundStyle(.tertiary)
-                    }
-
                     if strokeReplay > 0 {
                         StrokeOrderView(character: letter.character, token: strokeReplay)
                             .padding(24)
+                    } else if showGuide {
+                        Text(letter.character)
+                            .font(.system(size: 240, weight: .medium))
+                            .foregroundStyle(.tertiary)
                     }
 
                     DrawingCanvas(canvasView: canvasView)
