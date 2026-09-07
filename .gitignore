@@ -1,0 +1,29 @@
+# Xcode / Swift
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# CocoaPods / Carthage (nếu dùng sau này)
+Pods/
+Carthage/Build/
+
+# macOS
+.DS_Store
+
+# CodeGraph index (local only)
+.codegraph/
