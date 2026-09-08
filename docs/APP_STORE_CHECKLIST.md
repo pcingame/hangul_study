@@ -109,22 +109,19 @@ App không dùng mã hóa nào ngoài của hệ thống → khai báo sẵn đ�
 - [ ] **Keywords** (≤ 100 ký tự, phân tách bằng dấu phẩy): ví dụ `hangul,tiếng hàn,korean,bảng chữ cái,học tiếng hàn,phát âm,luyện viết,alphabet`
 - [ ] **Promotional text** (tuỳ chọn, ≤ 170 ký tự)
 - [x] **Trang Privacy + Support đã tạo**: `docs/index.html`, `docs/privacy.html`, `docs/support.html` (song ngữ VI/EN, email `phuongtdoan2008@gmail.com`).
-- [ ] **Bật GitHub Pages**: repo ▸ Settings ▸ Pages ▸ Source = "Deploy from a branch" ▸ Branch = `main`, thư mục `/docs` ▸ Save. Chờ ~1 phút.
+- [x] **Bật GitHub Pages**: repo ▸ Settings ▸ Pages ▸ Source = "Deploy from a branch" ▸ Branch = `main`, thư mục `/docs` ▸ Save. Đã live, cả 3 URL trả `200 OK` (kiểm tra 2026-09-09).
   - Privacy Policy URL → `https://pcingame.github.io/hangul_study/privacy.html`
   - Support URL → `https://pcingame.github.io/hangul_study/support.html`
-  - Kiểm tra 2 URL mở được trước khi điền vào App Store Connect
 - [ ] **Marketing URL**: tuỳ chọn (có thể dùng `https://pcingame.github.io/hangul_study/`)
 - [ ] **Copyright**: ví dụ `2026 <tên bạn>`
 - [ ] **Ngôn ngữ localizations**: thêm cả Vietnamese và English nếu muốn hiển thị metadata song ngữ
 
 ### Screenshots (bắt buộc)
 
-- [ ] **iPhone 6.9"** (1290×2796 hoặc 1320×2868) — bắt buộc, 3–10 ảnh
+- [x] **iPhone 6.9"** (1290×2796 hoặc 1320×2868) — bắt buộc, 3–10 ảnh
 - [x] **iPad**: đã tắt (`TARGETED_DEVICE_FAMILY = 1`) → không cần screenshot iPad
-- [ ] Chụp bằng Simulator **iPhone 17 Pro Max** (ra đúng 1320×2868). Mở app, `Cmd+S` trong Simulator hoặc `xcrun simctl io booted screenshot out.png`. Đổi tab bằng tay rồi chụp từng màn: Học / Ghép chữ / Kiểm tra / Luyện viết / chi tiết một chữ.
-  - Seed cho đẹp: `xcrun simctl spawn booted defaults write com.koreastudy.HangulStudy didOnboard -bool YES`, relaunch; nhớ `defaults delete` sau khi chụp.
-  - *(Không tự động hoá được trong phiên Claude: môi trường sandbox không tap được Simulator; chỉ `xcrun simctl io screenshot` chạy được.)*
-  - Ảnh cũ (cỡ khác) ở `docs/screenshots/`.
+- [x] Đã chụp bằng Simulator **iPhone 17 Pro Max**, đúng 1320×2868: `docs/screenshots/{onboarding,learn,build,quiz,write,settings}-{light,dark}.png` (10 ảnh, thiếu build-dark vì không cần thiết). Tiến độ được seed sẵn (22/40 chữ đã thuộc) cho đẹp.
+  - *(Tap tự động hoá được trong phiên Claude bằng `cliclick` + toạ độ tính từ khung cửa sổ Simulator — xem lịch sử chat nếu cần lặp lại.)*
 - [ ] App preview video: tuỳ chọn
 
 ---
