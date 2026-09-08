@@ -16,15 +16,16 @@ Thông tin dự án hiện tại (đã đọc từ `HangulStudy.xcodeproj`):
 
 ## 1. Tài khoản & thiết lập ban đầu
 
-- [ ] Đã tham gia **Apple Developer Program** (99 USD/năm), trạng thái Active
-- [ ] Đăng nhập được [App Store Connect](https://appstoreconnect.apple.com)
-- [ ] Trong App Store Connect ▸ **Agreements, Tax, and Banking**: hợp đồng "Free apps" ở trạng thái Active (bắt buộc kể cả app miễn phí)
-- [ ] Tạo **App ID / bản ghi app mới** trong App Store Connect:
+- [x] Đã tham gia **Apple Developer Program**, trạng thái Active (Team ID `P3MPHWPJ62`)
+- [x] Đăng nhập được [App Store Connect](https://appstoreconnect.apple.com)
+- [x] Agreements, Tax, and Banking: đã submit được app (nếu hợp đồng "Free apps" chưa Active thì App Store Connect đã chặn tạo app — không bị chặn nên coi như OK)
+- [x] Tạo **App ID / bản ghi app mới** trong App Store Connect (2026-09-09):
   - Platform: iOS
-  - Name: *(xem mục 6 — tên hiển thị)*
-  - Primary language: Vietnamese (hoặc English — nên chọn ngôn ngữ chính của store)
-  - Bundle ID: chọn `com.koreastudy.HangulStudy` (nếu chưa có, tạo trong Certificates, Identifiers & Profiles ▸ Identifiers)
-  - SKU: ví dụ `hangulstudy-001`
+  - Name: `Hangul Study`
+  - Primary language: Vietnamese
+  - Bundle ID: `com.koreastudy.HangulStudy` (đăng ký mới trong Certificates, Identifiers & Profiles ▸ Identifiers)
+  - SKU: `hangulstudy-001`
+  - Apple ID (App Store Connect): `6809894086`
 
 ---
 
@@ -102,19 +103,19 @@ App không dùng mã hóa nào ngoài của hệ thống → khai báo sẵn đ�
 
 ## 6. Metadata cho App Store Connect
 
-- [ ] **Tên app** (≤ 30 ký tự): ví dụ `Hangul Study — Học tiếng Hàn`
-- [ ] **Subtitle** (≤ 30 ký tự): ví dụ `Bảng chữ cái & phát âm`
-- [ ] **Category**: Primary = **Education**; Secondary (tuỳ chọn) = Reference
-- [ ] **Description**: mô tả tính năng (Học / Ghép chữ / Kiểm tra / Luyện viết / Phát âm / Lặp lại ngắt quãng / Song ngữ). Có thể lấy từ phần "Tính năng" trong `README.md`.
-- [ ] **Keywords** (≤ 100 ký tự, phân tách bằng dấu phẩy): ví dụ `hangul,tiếng hàn,korean,bảng chữ cái,học tiếng hàn,phát âm,luyện viết,alphabet`
-- [ ] **Promotional text** (tuỳ chọn, ≤ 170 ký tự)
+- [x] **Tên app**: `Hangul Study`
+- [x] **Subtitle**: `Bảng chữ cái & phát âm`
+- [x] **Category**: Primary = **Education**; Secondary = **Reference**
+- [x] **Description**: đã điền (dựa trên phần "Tính năng" trong `README.md`), ~2941/4000 ký tự.
+- [x] **Keywords** (78/100 ký tự): `hangul,tiếng hàn,korean,bảng chữ cái,học tiếng hàn,phát âm,luyện viết,alphabet`
+- [ ] **Promotional text** (tuỳ chọn, ≤ 170 ký tự) — bỏ trống, có thể thêm sau
 - [x] **Trang Privacy + Support đã tạo**: `docs/index.html`, `docs/privacy.html`, `docs/support.html` (song ngữ VI/EN, email `phuongtdoan2008@gmail.com`).
 - [x] **Bật GitHub Pages**: repo ▸ Settings ▸ Pages ▸ Source = "Deploy from a branch" ▸ Branch = `main`, thư mục `/docs` ▸ Save. Đã live, cả 3 URL trả `200 OK` (kiểm tra 2026-09-09).
-  - Privacy Policy URL → `https://pcingame.github.io/hangul_study/privacy.html`
-  - Support URL → `https://pcingame.github.io/hangul_study/support.html`
-- [ ] **Marketing URL**: tuỳ chọn (có thể dùng `https://pcingame.github.io/hangul_study/`)
-- [ ] **Copyright**: ví dụ `2026 <tên bạn>`
-- [ ] **Ngôn ngữ localizations**: thêm cả Vietnamese và English nếu muốn hiển thị metadata song ngữ
+  - Privacy Policy URL → `https://pcingame.github.io/hangul_study/privacy.html` (điền trong App Store Connect ▸ App Privacy ▸ Edit)
+  - Support URL → `https://pcingame.github.io/hangul_study/support.html` (điền trong mục Version 1.0)
+- [x] **Marketing URL**: `https://pcingame.github.io/hangul_study/`
+- [x] **Copyright**: `2026 Phuong Doan Thanh`
+- [ ] **Ngôn ngữ localizations**: hiện chỉ có Vietnamese; thêm English sau nếu muốn metadata song ngữ
 
 ### Screenshots (bắt buộc)
 
@@ -130,24 +131,24 @@ App không dùng mã hóa nào ngoài của hệ thống → khai báo sẵn đ�
 
 Trong App Store Connect ▸ App Privacy:
 
-- [ ] **Data Collection**: chọn **"No, we do not collect data from this app"**
+- [x] **Data Collection**: đã chọn **"No, we do not collect data from this app"** → hiện "Data Not Collected", đã **Publish** (2026-09-09)
   *(app không có mạng, không analytics, không account — mọi thứ lưu local bằng UserDefaults)*
 
 ---
 
 ## 8. Age rating
 
-- [ ] Điền bảng câu hỏi Age Rating: tất cả chọn **None / No** → kết quả **4+**
+- [x] Điền bảng câu hỏi Age Rating: tất cả chọn **None / No** → kết quả **4+** (172 quốc gia/khu vực; Brazil/Hàn Quốc/Việt Nam ra rating tương đương không giới hạn). Đã Save (2026-09-09).
 
 ---
 
 ## 9. Build, validate & upload
 
-- [ ] Cắm/chọn **"Any iOS Device (arm64)"** làm run destination
-- [ ] **Product ▸ Archive**
-- [ ] Trong Organizer: **Validate App** → sửa hết lỗi (thường là: thiếu privacy manifest, icon có alpha, build number trùng)
-- [ ] **Distribute App ▸ App Store Connect ▸ Upload**
-- [ ] Chờ email "processing complete" (5–30 phút), build xuất hiện ở tab **TestFlight**
+- [x] Chọn **"Any iOS Device (arm64)"** làm run destination
+- [x] **Product ▸ Archive**
+- [x] Trong Organizer: **Validate App** → không lỗi
+- [x] **Distribute App ▸ App Store Connect ▸ Upload** — upload thành công (2026-09-09)
+- [x] Build đã được xử lý và gán vào version 1.0 (build number `1`)
 
 Hoặc bằng dòng lệnh:
 ```bash
@@ -179,13 +180,15 @@ xcrun altool --upload-app -f build/export/HangulStudy.ipa -t ios \
 
 ## 11. Submit for Review
 
-- [ ] Gán build từ TestFlight vào version 1.0
-- [ ] **App Review Information**:
+- [x] Gán build vào version 1.0
+- [x] **App Review Information** (đã điền, Save 2026-09-09):
   - Sign-in required: **No**
-  - Notes cho reviewer (nên có):
+  - Contact: Phuong / Doan Thanh, `+84971149326`, `phuongtdoan2008@gmail.com`
+  - Notes cho reviewer:
     > App phát âm tiếng Hàn bằng giọng tổng hợp `ko-KR` của hệ thống. Nếu thiết bị review chưa cài giọng tiếng Hàn, phần nghe sẽ im lặng và app hiển thị hướng dẫn cài trong Cài đặt iOS ▸ Trợ năng ▸ Nội dung nói ▸ Giọng nói. Toàn bộ dữ liệu học lưu cục bộ, app không kết nối mạng.
-- [ ] **Version Release**: Manual hoặc Automatic sau khi được duyệt
-- [ ] Bấm **Add for Review** → **Submit**
+- [x] **Version Release**: để mặc định **Automatically release this version**
+- [x] Bấm **Add for Review** → **Submit** — **Đã nộp thành công**, trạng thái **"Waiting for Review"**
+  (Submission ID `7de99ae0-b883-48ba-97bf-ca6a1ce55cd5`, nộp lúc Sep 9, 2026, 1:01 AM)
 
 ---
 
@@ -208,8 +211,12 @@ xcrun altool --upload-app -f build/export/HangulStudy.ipa -t ios \
 
 5. ✅ **iPad đã tắt** — `TARGETED_DEVICE_FAMILY = 1`, bỏ luôn key orientation iPad. App giờ iPhone-only, chỉ cần screenshot iPhone 6.9".
 
-Còn cần bạn làm thủ công (ngoài code):
+Đã xử lý thủ công (ngoài code):
 
-6. **Bật GitHub Pages** cho thư mục `/docs` trên `main` (trang Privacy + Support đã tạo sẵn — mục 6).
-7. **Bộ screenshot iPhone 6.9"** — chụp bằng Simulator.
-8. **Trang App Store Connect** — metadata, App Privacy label, age rating, upload build.
+6. ✅ **Bật GitHub Pages** cho thư mục `/docs` trên `main` — live, cả 3 URL trả `200 OK`.
+7. ✅ **Bộ screenshot iPhone 6.9"** — chụp bằng Simulator iPhone 17 Pro Max, đúng 1320×2868, đã upload lên App Store Connect.
+8. ✅ **Trang App Store Connect** — app record, metadata, Category, App Privacy label (Data Not Collected, Published), Age Rating (4+), App Review Information đều đã điền và lưu.
+
+Còn lại duy nhất — cần Xcode trên máy, không làm qua trình duyệt được:
+
+9. **Archive & upload build** (mục 9) rồi **gán build + Submit** (mục 11).
