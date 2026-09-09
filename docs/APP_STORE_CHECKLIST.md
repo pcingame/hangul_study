@@ -190,6 +190,15 @@ xcrun altool --upload-app -f build/export/HangulStudy.ipa -t ios \
 - [x] Bấm **Add for Review** → **Submit** — **Đã nộp thành công**, trạng thái **"Waiting for Review"**
   (Submission ID `7de99ae0-b883-48ba-97bf-ca6a1ce55cd5`, nộp lúc Sep 9, 2026, 1:01 AM)
 
+### 11.1 Guideline 2.1 — Information Needed (tài khoản dev mới, chưa có lịch sử review)
+
+Cùng ngày, Apple trả lời yêu cầu bổ sung thông tin (thường gặp với tài khoản mới, không phải bị từ chối thật). Đã xử lý:
+
+- [x] Trả lời trong **App Store Connect ▸ Hangul Study ▸ Distribution ▸ App Review ▸ mở submission ▸ Reply to App Review**: mô tả mục đích/đối tượng dùng, hướng dẫn dùng app (không cần đăng nhập), danh sách dịch vụ ngoài (không có — chỉ dùng framework Apple), xác nhận app hoạt động giống nhau ở mọi khu vực, xác nhận không thuộc ngành bị quản lý/không dùng nội dung bên thứ ba được bảo hộ.
+- [x] Đính kèm **video quay màn hình trên iPhone thật** (do người dùng quay, nén từ 18.4 MB xuống ~3.9 MB bằng `ffmpeg` để đính kèm được, giới hạn của công cụ upload là 10 MB/lần).
+- [x] Copy cùng nội dung vào ô **Notes** của App Review Information (giữ nguyên ghi chú cũ về giọng đọc TTS, nối thêm câu trả lời 2–6 phía dưới).
+- [x] Sau khi Reply, app tự chuyển lại **"Waiting for Review"** (submission mới ~7:35 PM cùng ngày) — không cần bấm resubmit riêng.
+
 ---
 
 ## 12. Sau khi được duyệt
@@ -216,7 +225,8 @@ xcrun altool --upload-app -f build/export/HangulStudy.ipa -t ios \
 6. ✅ **Bật GitHub Pages** cho thư mục `/docs` trên `main` — live, cả 3 URL trả `200 OK`.
 7. ✅ **Bộ screenshot iPhone 6.9"** — chụp bằng Simulator iPhone 17 Pro Max, đúng 1320×2868, đã upload lên App Store Connect.
 8. ✅ **Trang App Store Connect** — app record, metadata, Category, App Privacy label (Data Not Collected, Published), Age Rating (4+), App Review Information đều đã điền và lưu.
+9. ✅ **Archive, validate, upload build** từ Xcode Organizer — build number `1` đã gán vào version 1.0.
+10. ✅ **Submit for Review** — nộp lần đầu lúc 1:01 AM (2026-09-09).
+11. ✅ **Guideline 2.1 — Information Needed** — trả lời đầy đủ (mô tả app, hướng dẫn dùng, dịch vụ ngoài, vùng miền, quy định) kèm video demo quay trên máy thật (mục 11.1). App quay lại **"Waiting for Review"** lúc ~7:35 PM cùng ngày.
 
-Còn lại duy nhất — cần Xcode trên máy, không làm qua trình duyệt được:
-
-9. **Archive & upload build** (mục 9) rồi **gán build + Submit** (mục 11).
+**Trạng thái hiện tại: đang chờ Apple review** (không còn việc gì để làm cho tới khi có phản hồi tiếp theo — approve, reject, hoặc hỏi thêm thông tin). Nếu có phản hồi mới, xem lại mục 10 (kiểm thử thủ công) trước — đây là mục duy nhất chưa được xác nhận từng bước trước khi nộp.
