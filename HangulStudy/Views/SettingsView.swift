@@ -5,6 +5,7 @@ struct SettingsView: View {
     @AppStorage("appAppearance") private var appearanceRaw = AppAppearance.system.rawValue
 
     @ObservedObject private var progress = ProgressStore.shared
+    @State private var showResetConfirm = false
 
     private var language: AppLanguage {
         AppLanguage(rawValue: languageRaw) ?? .vi
@@ -17,7 +18,7 @@ struct SettingsView: View {
                     LabeledContent(L.lettersLearned(language),
                                    value: "\(progress.learnedCount) / \(HangulData.all.count)")
                     Button(L.resetProgress(language), role: .destructive) {
-                        progress.reset()
+                        showResetConfirm = true
                     }
                 }
 
@@ -48,6 +49,16 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle(L.settingsTitle(language))
+            .confirmationDialog(L.resetProgressConfirmTitle(language),
+                                 isPresented: $showResetConfirm,
+                                 titleVisibility: .visible) {
+                Button(L.resetProgress(language), role: .destructive) {
+                    progress.reset()
+                }
+                Button(L.cancel(language), role: .cancel) {}
+            } message: {
+                Text(L.resetProgressConfirmMessage(language))
+            }
         }
     }
 }

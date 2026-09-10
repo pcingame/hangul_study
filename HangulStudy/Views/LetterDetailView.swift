@@ -37,6 +37,22 @@ struct LetterDetailView: View {
                     .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
 
                     VStack(alignment: .leading, spacing: 12) {
+                        Text(L.showStrokes(language))
+                            .font(.headline)
+
+                        StrokeOrderView(character: letter.character)
+                            .frame(width: 180, height: 180)
+                            .frame(maxWidth: .infinity)
+
+                        Text(L.tapToReplay(language))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .padding()
+                    .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+
+                    VStack(alignment: .leading, spacing: 12) {
                         Text(L.example(language))
                             .font(.headline)
 

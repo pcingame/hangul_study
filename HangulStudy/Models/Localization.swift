@@ -98,6 +98,12 @@ enum L {
     static let progress = Bilingual(vi: "Tiến độ", en: "Progress")
     static let lettersLearned = Bilingual(vi: "Chữ đã thuộc", en: "Letters learned")
     static let resetProgress = Bilingual(vi: "Xóa tiến độ", en: "Reset progress")
+    static let resetProgressConfirmTitle = Bilingual(vi: "Xóa toàn bộ tiến độ?", en: "Reset all progress?")
+    static let resetProgressConfirmMessage = Bilingual(
+        vi: "Thao tác này sẽ xóa tiến độ học của tất cả các chữ và không thể hoàn tác.",
+        en: "This clears your learning progress for every letter and cannot be undone."
+    )
+    static let cancel = Bilingual(vi: "Hủy", en: "Cancel")
     static let learned = Bilingual(vi: "Đã thuộc", en: "Learned")
 
     // Phát âm
@@ -154,4 +160,5 @@ enum L {
 
     // Luyện viết
     static let showStrokes = Bilingual(vi: "Xem cách viết", en: "Show strokes")
+    static let tapToReplay = Bilingual(vi: "Chạm để xem lại", en: "Tap to replay")
 }

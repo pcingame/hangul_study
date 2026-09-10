@@ -9,7 +9,9 @@ struct StrokeGuide {
 }
 
 /// Nguồn nét cho `StrokeOrderView`: ưu tiên dữ liệu viết tay (đường trung tâm,
-/// đúng thứ tự) cho 24 chữ cơ bản; các chữ khác lấy đường viền glyph của font.
+/// đúng thứ tự) từ `HangulStrokes` — hiện phủ toàn bộ 40 chữ trong `HangulData`.
+/// Ký tự lạ không có trong đó (ví dụ âm tiết đã ghép) mới rơi vào dự phòng:
+/// lấy đường viền glyph của font.
 @MainActor
 enum StrokeSource {
     private static let font = CTFontCreateWithName("AppleSDGothicNeo-Bold" as CFString, 100, nil)
@@ -97,18 +99,24 @@ private struct NormalizedShape: Shape {
 struct StrokeOrderView: View {
     let character: String
     var token: Int = 0
+    /// Hệ số nhân thêm vào bề rộng bút, dùng khi cần nét mảnh hơn mặc định
+    /// (ví dụ khi hiển thị cạnh nét bút thật của người dùng).
+    var strokeWidthScale: CGFloat = 1
 
     /// Số nét đã vẽ xong.
     @State private var completed = 0
     /// Tiến độ 0…1 của nét đang vẽ.
     @State private var tracing: CGFloat = 0
     @State private var localReplay = 0
+    /// Độ mờ của nét đã vẽ xong: đậm khi đang trình diễn, mờ dần sau đó để
+    /// không đè lên nét người dùng tự viết.
+    @State private var demoOpacity: Double = 1
 
     private var guide: StrokeGuide { StrokeSource.guide(for: character) }
 
     var body: some View {
         GeometryReader { geo in
-            let lineWidth = min(geo.size.width, geo.size.height) * guide.widthFraction
+            let lineWidth = min(geo.size.width, geo.size.height) * guide.widthFraction * strokeWidthScale
             let style = StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round)
 
             ZStack {
@@ -121,6 +129,7 @@ struct StrokeOrderView: View {
                         .trim(from: 0, to: progress(index))
                         .stroke(Color.accentColor, style: style)
                 }
+                .opacity(demoOpacity)
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -139,6 +148,7 @@ struct StrokeOrderView: View {
         let count = guide.strokes.count
         completed = 0
         tracing = 0
+        demoOpacity = 1
         guard count > 0 else { return }
 
         for index in 0..<count {
@@ -153,6 +163,11 @@ struct StrokeOrderView: View {
             try? await Task.sleep(for: .seconds(0.12))
             guard !Task.isCancelled else { return }
         }
+
+        // Giữ nét đầy đủ một nhịp rồi mờ dần, để không đè lên nét người dùng tự viết sau đó.
+        try? await Task.sleep(for: .seconds(0.4))
+        guard !Task.isCancelled else { return }
+        withAnimation(.easeOut(duration: 0.6)) { demoOpacity = 0 }
     }
 
     /// Nét nhiều đoạn (vòng tròn) được vẽ chậm hơn nét thẳng.

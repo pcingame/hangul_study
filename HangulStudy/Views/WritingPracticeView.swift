@@ -4,6 +4,7 @@ import PencilKit
 struct WritingPracticeView: View {
     let language: AppLanguage
 
+    @State private var scope: QuizScope = .all
     @State private var letters = HangulData.all.shuffled()
     @State private var index = 0
     @State private var canvasView = PKCanvasView()
@@ -26,6 +27,10 @@ struct WritingPracticeView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
+                    Text("\(index + 1) / \(letters.count)")
+                        .font(.footnote)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
                     Button {
                         SpeechService.shared.speak(letter)
                     } label: {
@@ -35,6 +40,19 @@ struct WritingPracticeView: View {
                 }
                 .padding(.horizontal)
 
+                Picker(L.quizScopeLabel(language), selection: $scope) {
+                    ForEach(QuizScope.allChoices) { Text($0.label(language)).tag($0) }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: scope) { _, newScope in applyScope(newScope) }
+
+                if scope.pool().isEmpty {
+                    Text(L.quizNothingDue(language))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+
                 Text(L.writeHint(language))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -43,14 +61,14 @@ struct WritingPracticeView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color(.secondarySystemBackground))
 
-                    if strokeReplay > 0 {
-                        StrokeOrderView(character: letter.character, token: strokeReplay)
-                            .padding(24)
-                    } else if showGuide {
+                    if showGuide {
                         Text(letter.character)
-                            .font(.system(size: 240, weight: .medium))
+                            .font(.system(size: 190, weight: .medium))
                             .foregroundStyle(.tertiary)
                     }
+
+                    StrokeOrderView(character: letter.character, token: strokeReplay, strokeWidthScale: 0.6)
+                        .padding(40)
 
                     DrawingCanvas(canvasView: canvasView)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -83,7 +101,6 @@ struct WritingPracticeView: View {
 
                         Button {
                             canvasView.drawing = PKDrawing()
-                            strokeReplay = 0
                             index = (index + 1) % letters.count
                         } label: {
                             Label(L.nextLetter(language), systemImage: "arrow.right")
@@ -98,6 +115,15 @@ struct WritingPracticeView: View {
             .padding(.top)
             .navigationTitle(L.writeTitle(language))
         }
+    }
+
+    /// Đổi phạm vi luyện tập; giữ nguyên danh sách cũ nếu phạm vi mới trống (ví dụ "Cần ôn" mà chưa có chữ nào).
+    private func applyScope(_ scope: QuizScope) {
+        let pool = scope.pool()
+        guard !pool.isEmpty else { return }
+        letters = pool.shuffled()
+        index = 0
+        canvasView.drawing = PKDrawing()
     }
 }
 

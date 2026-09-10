@@ -10,15 +10,23 @@ struct StrokeSourceTests {
         #expect(guide.widthFraction > 0.08) // bút dày cho nét trung tâm
     }
 
-    @Test func compoundVowelFallsBackToGlyphContours() {
-        let guide = StrokeSource.guide(for: "ㅐ")
-        #expect(!guide.strokes.isEmpty)
-        #expect(guide.widthFraction < 0.08) // bút mảnh cho đường viền
+    @Test func doubleConsonantUsesHandAuthoredCenterlineData() {
+        let guide = StrokeSource.guide(for: "ㅃ")
+        #expect(guide.strokes.count == HangulStrokes.strokes(for: "ㅃ")!.count)
+        #expect(guide.widthFraction > 0.08) // bút dày cho nét trung tâm
     }
 
-    @Test func doubleConsonantFallsBackAndStillHasStrokes() {
-        let guide = StrokeSource.guide(for: "ㄲ")
+    @Test func compoundVowelUsesHandAuthoredCenterlineData() {
+        let guide = StrokeSource.guide(for: "ㅐ")
+        #expect(guide.strokes.count == HangulStrokes.strokes(for: "ㅐ")!.count)
+        #expect(guide.widthFraction > 0.08) // bút dày cho nét trung tâm
+    }
+
+    /// Chữ không có trong `HangulStrokes` (âm tiết, không phải jamo rời) mới rơi vào dự phòng.
+    @Test func unknownCharacterFallsBackToGlyphContours() {
+        let guide = StrokeSource.guide(for: "가")
         #expect(!guide.strokes.isEmpty)
+        #expect(guide.widthFraction < 0.08) // bút mảnh cho đường viền
     }
 
     @Test func everyLetterProducesAtLeastOneStroke() {

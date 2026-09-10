@@ -1,12 +1,11 @@
 import CoreGraphics
 import Foundation
 
-/// Dữ liệu nét viết tay (đường trung tâm, đúng thứ tự) cho 24 chữ cái cơ bản.
+/// Dữ liệu nét viết tay (đường trung tâm, đúng thứ tự) cho toàn bộ 40 chữ cái:
+/// 24 chữ cơ bản, cộng phụ âm đôi và nguyên âm ghép (ghép từ chữ cơ bản, xem `combine`).
 ///
 /// Toạ độ chuẩn hoá trong ô 0…1, trục y hướng xuống (giống SwiftUI).
 /// Mỗi chữ là một mảng nét; mỗi nét là một polyline (đường gấp khúc).
-/// Các chữ khác (âm đôi, nguyên âm ghép) không có ở đây và dùng đường viền
-/// glyph của font làm dự phòng.
 enum HangulStrokes {
     static func strokes(for character: String) -> [[CGPoint]]? {
         table[character]
@@ -22,6 +21,27 @@ enum HangulStrokes {
             let angle = -CGFloat.pi / 2 - (CGFloat(index) / CGFloat(steps)) * 2 * .pi
             return CGPoint(x: cx + r * cos(angle), y: cy + r * sin(angle))
         }
+    }
+
+    /// Ghép nhiều chữ cạnh nhau theo chiều ngang, mỗi chữ ép hẹp vào một cột
+    /// bằng nhau (dùng cho phụ âm đôi và nguyên âm ghép).
+    private static func combine(_ parts: [[[CGPoint]]]) -> [[CGPoint]] {
+        let margin: CGFloat = 0.04
+        let gap: CGFloat = 0.08
+        let n = CGFloat(parts.count)
+        let columnWidth = (1 - 2 * margin - (n - 1) * gap) / n
+        return parts.enumerated().flatMap { index, strokes -> [[CGPoint]] in
+            let lower = margin + CGFloat(index) * (columnWidth + gap)
+            let range = lower...(lower + columnWidth)
+            return strokes.map { stroke in
+                stroke.map { pt(range.lowerBound + $0.x * (range.upperBound - range.lowerBound), $0.y) }
+            }
+        }
+    }
+
+    /// Phụ âm đôi = viết chữ cái gốc hai lần, ép hẹp ngang để nằm cạnh nhau.
+    private static func doubled(_ strokes: [[CGPoint]]) -> [[CGPoint]] {
+        combine([strokes, strokes])
     }
 
     private static let table: [String: [[CGPoint]]] = {
@@ -101,6 +121,14 @@ enum HangulStrokes {
             circle(0.50, 0.66, 0.20),
         ]
 
+        // MARK: Phụ âm đôi
+
+        t["ㄲ"] = doubled(t["ㄱ"]!)
+        t["ㄸ"] = doubled(t["ㄷ"]!)
+        t["ㅃ"] = doubled(t["ㅂ"]!)
+        t["ㅆ"] = doubled(t["ㅅ"]!)
+        t["ㅉ"] = doubled(t["ㅈ"]!)
+
         // MARK: Nguyên âm cơ bản
 
         t["ㅏ"] = [
@@ -150,6 +178,20 @@ enum HangulStrokes {
         t["ㅡ"] = [[pt(0.14, 0.50), pt(0.86, 0.50)]]
 
         t["ㅣ"] = [[pt(0.50, 0.10), pt(0.50, 0.90)]]
+
+        // MARK: Nguyên âm ghép (ghép 2 nguyên âm cơ bản, viết đúng thứ tự từng phần)
+
+        t["ㅘ"] = combine([t["ㅗ"]!, t["ㅏ"]!])
+        t["ㅚ"] = combine([t["ㅗ"]!, t["ㅣ"]!])
+        t["ㅝ"] = combine([t["ㅜ"]!, t["ㅓ"]!])
+        t["ㅟ"] = combine([t["ㅜ"]!, t["ㅣ"]!])
+        t["ㅢ"] = combine([t["ㅡ"]!, t["ㅣ"]!])
+        t["ㅐ"] = combine([t["ㅏ"]!, t["ㅣ"]!])
+        t["ㅒ"] = combine([t["ㅑ"]!, t["ㅣ"]!])
+        t["ㅔ"] = combine([t["ㅓ"]!, t["ㅣ"]!])
+        t["ㅖ"] = combine([t["ㅕ"]!, t["ㅣ"]!])
+        t["ㅙ"] = combine([t["ㅗ"]!, t["ㅏ"]!, t["ㅣ"]!])
+        t["ㅞ"] = combine([t["ㅜ"]!, t["ㅓ"]!, t["ㅣ"]!])
 
         return t
     }()

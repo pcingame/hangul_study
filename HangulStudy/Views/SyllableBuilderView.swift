@@ -76,6 +76,17 @@ struct SyllableBuilderView: View {
                 }
                 .padding(.horizontal, 2)
             }
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.03),
+                        .init(color: .black, location: 0.97),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .leading, endPoint: .trailing
+                )
+            )
         }
     }
 }
