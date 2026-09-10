@@ -10,8 +10,14 @@ struct WritingPracticeView: View {
     @State private var canvasView = PKCanvasView()
     @State private var showGuide = true
     @State private var strokeReplay = 0
+    @State private var checkResult: WritingCheckResult?
 
     private var letter: HangulLetter { letters[index] }
+
+    private enum WritingCheckResult: Equatable {
+        case empty
+        case scored(Int)
+    }
 
     var body: some View {
         NavigationStack {
@@ -77,6 +83,10 @@ struct WritingPracticeView: View {
                 .aspectRatio(1, contentMode: .fit)
                 .padding(.horizontal)
 
+                if let checkResult {
+                    checkResultBanner(checkResult)
+                }
+
                 VStack(spacing: 10) {
                     HStack(spacing: 12) {
                         Toggle(L.showGuide(language), isOn: $showGuide)
@@ -91,9 +101,18 @@ struct WritingPracticeView: View {
                         .buttonStyle(.bordered)
                     }
 
+                    Button {
+                        checkWriting()
+                    } label: {
+                        Label(L.checkWriting(language), systemImage: "checkmark.seal")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+
                     HStack(spacing: 12) {
                         Button {
                             canvasView.drawing = PKDrawing()
+                            checkResult = nil
                         } label: {
                             Label(L.clear(language), systemImage: "eraser")
                         }
@@ -101,6 +120,7 @@ struct WritingPracticeView: View {
 
                         Button {
                             canvasView.drawing = PKDrawing()
+                            checkResult = nil
                             index = (index + 1) % letters.count
                         } label: {
                             Label(L.nextLetter(language), systemImage: "arrow.right")
@@ -109,6 +129,7 @@ struct WritingPracticeView: View {
                     }
                 }
                 .padding(.horizontal)
+                .animation(.default, value: checkResult)
 
                 Spacer()
             }
@@ -124,6 +145,48 @@ struct WritingPracticeView: View {
         letters = pool.shuffled()
         index = 0
         canvasView.drawing = PKDrawing()
+        checkResult = nil
+    }
+
+    private func checkWriting() {
+        guard !canvasView.drawing.strokes.isEmpty else {
+            checkResult = .empty
+            return
+        }
+        guard let reference = HangulStrokes.strokes(for: letter.character),
+              let score = HandwritingScorer.score(userStrokes: normalizedUserStrokes(), reference: reference) else {
+            checkResult = nil
+            return
+        }
+        checkResult = .scored(score)
+    }
+
+    /// Toạ độ các nét người dùng vẽ, chuẩn hoá về ô 0…1 (cùng hệ với `HangulStrokes`)
+    /// bằng cách chia cho kích thước thật của canvas.
+    private func normalizedUserStrokes() -> [[CGPoint]] {
+        let size = canvasView.bounds.size
+        guard size.width > 0, size.height > 0 else { return [] }
+        return canvasView.drawing.strokes.map { stroke in
+            stroke.path.map { CGPoint(x: $0.location.x / size.width, y: $0.location.y / size.height) }
+        }
+    }
+
+    @ViewBuilder
+    private func checkResultBanner(_ result: WritingCheckResult) -> some View {
+        switch result {
+        case .empty:
+            Text(L.writingScoreEmpty(language))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        case .scored(let score):
+            let message: Bilingual = score >= 80 ? L.writingScoreGreat : (score >= 50 ? L.writingScoreOk : L.writingScoreLow)
+            let color: Color = score >= 80 ? .green : (score >= 50 ? .orange : .red)
+            Text("\(score)% — \(message(language))")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(color)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
     }
 }
 

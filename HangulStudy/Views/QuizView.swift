@@ -4,6 +4,7 @@ import UIKit
 enum QuizMode: CaseIterable, Identifiable {
     case seeLetter   // nhìn chữ, chọn cách đọc
     case hearSound   // nghe âm, chọn chữ
+    case typeAnswer  // nhìn chữ, tự gõ cách đọc (không có sẵn lựa chọn)
 
     var id: Self { self }
 
@@ -11,6 +12,7 @@ enum QuizMode: CaseIterable, Identifiable {
         switch self {
         case .seeLetter: return L.quizModeSeeLetter
         case .hearSound: return L.quizModeHearSound
+        case .typeAnswer: return L.quizModeType
         }
     }
 }
@@ -54,11 +56,31 @@ struct QuizQuestion: Identifiable {
     let mode: QuizMode
     let options: [String]
 
-    /// Đáp án đúng: cách đọc (seeLetter) hoặc ký tự (hearSound).
-    var answer: String { mode == .seeLetter ? letter.romanization : letter.character }
+    /// Đáp án đúng để hiển thị khi trả lời sai: cách đọc (seeLetter/typeAnswer) hoặc ký tự (hearSound).
+    var answer: String { mode == .hearSound ? letter.character : letter.romanization }
 
-    /// Nội dung hiển thị cho mỗi lựa chọn.
-    var prompt: Bilingual { mode == .seeLetter ? L.quizPrompt : L.quizPromptHear }
+    /// Nội dung hiển thị cho mỗi lựa chọn / ô nhập.
+    var prompt: Bilingual {
+        switch mode {
+        case .seeLetter: return L.quizPrompt
+        case .hearSound: return L.quizPromptHear
+        case .typeAnswer: return L.quizTypePrompt
+        }
+    }
+
+    /// Cách đọc có thể chấp nhận khi gõ tay: `letter.romanization` đôi khi gộp nhiều lựa
+    /// chọn cách nhau bởi "/" (vd "g / k"), gõ đúng một trong các phần đó là được.
+    private var acceptableTypedAnswers: [String] {
+        letter.romanization.split(separator: "/").map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+    }
+
+    /// Kiểm tra một lựa chọn (hoặc nội dung gõ tay) có đúng không.
+    func isCorrect(_ option: String) -> Bool {
+        if mode == .typeAnswer {
+            return acceptableTypedAnswers.contains(option.trimmingCharacters(in: .whitespaces).lowercased())
+        }
+        return option == answer
+    }
 }
 
 @MainActor
@@ -103,6 +125,10 @@ final class QuizModel: ObservableObject {
     }
 
     private func makeQuestion(for letter: HangulLetter, mode: QuizMode, pool: [HangulLetter]) -> QuizQuestion {
+        // Chế độ gõ tay không cần lựa chọn sẵn.
+        guard mode != .typeAnswer else {
+            return QuizQuestion(letter: letter, mode: mode, options: [])
+        }
         let correct = mode == .seeLetter ? letter.romanization : letter.character
         let distractorSource = (pool.count >= 4 ? pool : HangulData.all)
         let distractors = distractorSource
@@ -113,12 +139,12 @@ final class QuizModel: ObservableObject {
         return QuizQuestion(letter: letter, mode: mode, options: ([correct] + distractors).shuffled())
     }
 
-    /// Trả về true nếu chọn đúng.
+    /// Trả về true nếu chọn/gõ đúng.
     @discardableResult
     func choose(_ option: String) -> Bool {
         guard selected == nil, let current else { return false }
         selected = option
-        let isCorrect = option == current.answer
+        let isCorrect = current.isCorrect(option)
         if isCorrect {
             score += 1
         } else {
@@ -140,6 +166,7 @@ struct QuizView: View {
     @StateObject private var model = QuizModel()
     @State private var mode: QuizMode = .seeLetter
     @State private var scope: QuizScope = .all
+    @State private var typedAnswer = ""
 
     private let haptics = UINotificationFeedbackGenerator()
 
@@ -190,7 +217,10 @@ struct QuizView: View {
                     .multilineTextAlignment(.center)
             }
 
-            Button(L.startQuiz(language)) { model.start(mode: mode, scope: scope) }
+            Button(L.startQuiz(language)) {
+                typedAnswer = ""
+                model.start(mode: mode, scope: scope)
+            }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .disabled(scope.pool().count < 4)
@@ -232,26 +262,23 @@ struct QuizView: View {
                 Text(question.prompt(language))
                     .font(.headline)
 
-                VStack(spacing: 10) {
-                    ForEach(question.options, id: \.self) { option in
-                        Button {
-                            let correct = model.choose(option)
-                            haptics.notificationOccurred(correct ? .success : .error)
-                            if correct {
-                                SoundEffects.shared.playCorrect()
-                            } else {
-                                SoundEffects.shared.playWrong()
+                if question.mode == .typeAnswer {
+                    typedAnswerField(question)
+                } else {
+                    VStack(spacing: 10) {
+                        ForEach(question.options, id: \.self) { option in
+                            Button {
+                                answer(question, with: option)
+                            } label: {
+                                Text(option)
+                                    .font(question.mode == .hearSound ? .title2.weight(.medium) : .body)
+                                    .frame(maxWidth: .infinity, minHeight: 28)
                             }
-                            SpeechService.shared.speak(question.letter)
-                        } label: {
-                            Text(option)
-                                .font(question.mode == .hearSound ? .title2.weight(.medium) : .body)
-                                .frame(maxWidth: .infinity, minHeight: 28)
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+                            .tint(optionTint(option, question: question))
+                            .disabled(model.selected != nil)
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
-                        .tint(optionTint(option, question: question))
-                        .disabled(model.selected != nil)
                     }
                 }
             }
@@ -263,15 +290,17 @@ struct QuizView: View {
         .scrollBounceBehavior(.basedOnSize)
         .safeAreaInset(edge: .bottom) {
             if let selected = model.selected {
+                let wasCorrect = question.isCorrect(selected)
                 VStack(spacing: 10) {
-                    Text(selected == question.answer
+                    Text(wasCorrect
                          ? L.correct(language)
                          : "\(L.wrong(language)) — \(question.answer)")
                         .font(.headline)
-                        .foregroundStyle(selected == question.answer ? .green : .red)
+                        .foregroundStyle(wasCorrect ? .green : .red)
 
                     Button(model.index + 1 < model.questions.count ? L.nextQuestion(language) : L.seeResult(language)) {
                         model.advance()
+                        typedAnswer = ""
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
@@ -282,6 +311,39 @@ struct QuizView: View {
                 .background(.bar)
             }
         }
+    }
+
+    private func typedAnswerField(_ question: QuizQuestion) -> some View {
+        VStack(spacing: 10) {
+            TextField(L.quizTypePlaceholder(language), text: $typedAnswer)
+                .textFieldStyle(.roundedBorder)
+                .font(.title3)
+                .multilineTextAlignment(.center)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .disabled(model.selected != nil)
+                .onSubmit { answer(question, with: typedAnswer) }
+                .frame(maxWidth: 280)
+                .frame(maxWidth: .infinity)
+
+            Button(L.checkAnswer(language)) { answer(question, with: typedAnswer) }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(model.selected != nil || typedAnswer.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+    }
+
+    /// Xử lý chung cho cả bấm lựa chọn lẫn gõ đáp án: ghi nhận, rung, phát âm thanh + đọc chữ.
+    private func answer(_ question: QuizQuestion, with option: String) {
+        guard model.selected == nil, !option.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        let correct = model.choose(option)
+        haptics.notificationOccurred(correct ? .success : .error)
+        if correct {
+            SoundEffects.shared.playCorrect()
+        } else {
+            SoundEffects.shared.playWrong()
+        }
+        SpeechService.shared.speak(question.letter)
     }
 
     private func optionTint(_ option: String, question: QuizQuestion) -> Color {

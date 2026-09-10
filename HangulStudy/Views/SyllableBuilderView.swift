@@ -6,6 +6,7 @@ struct SyllableBuilderView: View {
     @State private var initial = 0
     @State private var medial = 0
     @State private var final = 0 // 0 = không có batchim
+    @State private var showReference = false
 
     private var syllable: String {
         HangulSyllable.compose(initial: initial, medial: medial, final: final)
@@ -47,6 +48,18 @@ struct SyllableBuilderView: View {
                 .padding()
             }
             .navigationTitle(L.buildTitle(language))
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showReference = true
+                    } label: {
+                        Image(systemName: "book")
+                    }
+                }
+            }
+            .sheet(isPresented: $showReference) {
+                ReferenceMenuView(language: language)
+            }
         }
     }
 

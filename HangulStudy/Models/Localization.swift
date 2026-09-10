@@ -161,4 +161,39 @@ enum L {
     // Luyện viết
     static let showStrokes = Bilingual(vi: "Xem cách viết", en: "Show strokes")
     static let tapToReplay = Bilingual(vi: "Chạm để xem lại", en: "Tap to replay")
+    static let checkWriting = Bilingual(vi: "Chấm điểm", en: "Check")
+    static let writingScoreGreat = Bilingual(vi: "Rất tốt! 🎉", en: "Great job! 🎉")
+    static let writingScoreOk = Bilingual(vi: "Khá ổn, viết lại cho quen nét nhé", en: "Not bad — trace it again to get the strokes smoother")
+    static let writingScoreLow = Bilingual(vi: "Chưa khớp lắm, thử theo đúng nét mẫu nhé", en: "Doesn't match yet — try to follow the guide's strokes")
+    static let writingScoreEmpty = Bilingual(vi: "Viết chữ vào ô trước đã nhé", en: "Write the letter in the box first")
+
+    // Tham khảo (quy tắc phát âm, số đếm)
+    static let referenceTab = Bilingual(vi: "Tham khảo", en: "Reference")
+    static let referenceTitle = Bilingual(vi: "Tham khảo thêm", en: "More to learn")
+    static let pronunciationRulesTitle = Bilingual(vi: "Quy tắc phát âm", en: "Pronunciation rules")
+    static let pronunciationRulesSubtitle = Bilingual(vi: "Phụ âm cuối & nối âm", en: "Batchim & liaison")
+    static let numbersTitle = Bilingual(vi: "Số đếm", en: "Numbers")
+    static let numbersSubtitle = Bilingual(vi: "Hán-Hàn & thuần Hàn", en: "Sino-Korean & native")
+
+    static let batchimSectionTitle = Bilingual(vi: "Quy tắc âm cuối (받침)", en: "Final-consonant rule (받침)")
+    static let batchimSectionBody = Bilingual(
+        vi: "28 phụ âm cuối chỉ đọc thành 7 âm đại diện — chạm một nhóm để nghe âm đó.",
+        en: "All 28 possible final consonants collapse into just 7 sounds — tap a group to hear it."
+    )
+    static let liaisonSectionTitle = Bilingual(vi: "Nối âm (연음)", en: "Liaison (연음)")
+    static let liaisonSectionBody = Bilingual(
+        vi: "Khi âm tiết sau bắt đầu bằng ㅇ, phụ âm cuối của âm tiết trước nối sang làm phụ âm đầu.",
+        en: "When the next syllable starts with ㅇ, the previous syllable's final consonant carries over as its initial sound."
+    )
+
+    static let numbersSino = Bilingual(vi: "Hán-Hàn", en: "Sino-Korean")
+    static let numbersNative = Bilingual(vi: "Thuần Hàn", en: "Native Korean")
+    static let numbersSinoHint = Bilingual(vi: "đếm số, tiền, ngày, số điện thoại", en: "counting, money, dates, phone numbers")
+    static let numbersNativeHint = Bilingual(vi: "đếm đồ vật, tuổi (chỉ tới 99)", en: "counting objects, age (up to 99 only)")
+
+    // Kiểm tra kiểu gõ đáp án
+    static let quizModeType = Bilingual(vi: "Gõ đáp án", en: "Type answer")
+    static let quizTypePrompt = Bilingual(vi: "Chữ này đọc là gì? Gõ cách đọc:", en: "How is this letter read? Type it:")
+    static let quizTypePlaceholder = Bilingual(vi: "cách đọc...", en: "romanization...")
+    static let checkAnswer = Bilingual(vi: "Kiểm tra", en: "Check")
 }

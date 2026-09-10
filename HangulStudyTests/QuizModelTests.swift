@@ -75,6 +75,31 @@ struct QuizModelTests {
         }
     }
 
+    @Test func typeAnswerQuestionsHaveNoPresetOptions() {
+        let (model, _) = makeModel()
+        model.start(mode: .typeAnswer, scope: .all)
+        #expect(model.questions.allSatisfy { $0.options.isEmpty })
+        #expect(model.questions.allSatisfy { $0.prompt(.vi) == L.quizTypePrompt(.vi) })
+    }
+
+    @Test func typeAnswerAcceptsAnyRomanizationVariantCaseInsensitively() {
+        let question = QuizQuestion(letter: HangulData.basicConsonants[0], mode: .typeAnswer, options: [])
+        // ㄱ: romanization "g / k" — cả hai đều phải được chấp nhận, không phân biệt hoa/thường/khoảng trắng.
+        #expect(question.isCorrect("g"))
+        #expect(question.isCorrect(" K "))
+        #expect(!question.isCorrect("x"))
+    }
+
+    @Test func choosingCorrectTypedAnswerRaisesScore() {
+        let (model, _) = makeModel()
+        model.start(mode: .typeAnswer, scope: .all)
+        let question = model.current!
+        let variant = question.letter.romanization.split(separator: "/")[0].trimmingCharacters(in: .whitespaces)
+
+        #expect(model.choose(variant) == true)
+        #expect(model.score == 1)
+    }
+
     @Test func categoryScopeKeepsQuestionsInsideCategory() {
         let (model, _) = makeModel()
         model.start(mode: .seeLetter, scope: .category(.basicVowel))
