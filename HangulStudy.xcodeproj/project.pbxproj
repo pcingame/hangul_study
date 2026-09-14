@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
@@ -22,16 +22,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		AA00000000000000000000001 /* HangulStudy */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HangulStudy;
-			sourceTree = "<group>";
-		};
-		BB00000000000000000000001 /* HangulStudyTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HangulStudyTests;
-			sourceTree = "<group>";
-		};
+		AA00000000000000000000001 /* HangulStudy */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HangulStudy; sourceTree = "<group>"; };
+		BB00000000000000000000001 /* HangulStudyTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HangulStudyTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,7 +135,6 @@
 			);
 			mainGroup = AA00000000000000000000004;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = AA00000000000000000000005 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -327,10 +318,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hangul Study";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Ứng dụng cần dùng micro để ghi âm bạn phát âm tiếng Hàn và chấm điểm.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Ứng dụng dùng nhận diện giọng nói, xử lý ngay trên máy, để so khớp phát âm của bạn với cách đọc chuẩn.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -357,10 +350,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hangul Study";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Ứng dụng cần dùng micro để ghi âm bạn phát âm tiếng Hàn và chấm điểm.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Ứng dụng dùng nhận diện giọng nói, xử lý ngay trên máy, để so khớp phát âm của bạn với cách đọc chuẩn.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

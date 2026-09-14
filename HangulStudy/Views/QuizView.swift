@@ -5,6 +5,7 @@ enum QuizMode: CaseIterable, Identifiable {
     case seeLetter   // nhìn chữ, chọn cách đọc
     case hearSound   // nghe âm, chọn chữ
     case typeAnswer  // nhìn chữ, tự gõ cách đọc (không có sẵn lựa chọn)
+    case pronounce   // nhìn chữ, đọc to và được chấm điểm phát âm
 
     var id: Self { self }
 
@@ -13,6 +14,7 @@ enum QuizMode: CaseIterable, Identifiable {
         case .seeLetter: return L.quizModeSeeLetter
         case .hearSound: return L.quizModeHearSound
         case .typeAnswer: return L.quizModeType
+        case .pronounce: return L.quizModePronounce
         }
     }
 }
@@ -55,9 +57,18 @@ struct QuizQuestion: Identifiable {
     let letter: HangulLetter
     let mode: QuizMode
     let options: [String]
+    /// Chỉ có ý nghĩa khi `mode == .pronounce`: đọc theo tên chữ hay theo từ ví dụ.
+    var pronunciationTarget: PronunciationTarget = .letterName
 
-    /// Đáp án đúng để hiển thị khi trả lời sai: cách đọc (seeLetter/typeAnswer) hoặc ký tự (hearSound).
-    var answer: String { mode == .hearSound ? letter.character : letter.romanization }
+    /// Đáp án đúng để hiển thị khi trả lời sai: cách đọc (seeLetter/typeAnswer), ký tự (hearSound)
+    /// hoặc cách đọc thành tiếng (pronounce, theo `pronunciationTarget`).
+    var answer: String {
+        switch mode {
+        case .hearSound: return letter.character
+        case .pronounce: return pronunciationTarget.spokenText(for: letter)
+        case .seeLetter, .typeAnswer: return letter.romanization
+        }
+    }
 
     /// Nội dung hiển thị cho mỗi lựa chọn / ô nhập.
     var prompt: Bilingual {
@@ -65,6 +76,7 @@ struct QuizQuestion: Identifiable {
         case .seeLetter: return L.quizPrompt
         case .hearSound: return L.quizPromptHear
         case .typeAnswer: return L.quizTypePrompt
+        case .pronounce: return L.quizPronouncePrompt
         }
     }
 
@@ -74,18 +86,25 @@ struct QuizQuestion: Identifiable {
         letter.romanization.split(separator: "/").map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
     }
 
-    /// Kiểm tra một lựa chọn (hoặc nội dung gõ tay) có đúng không.
+    /// Kiểm tra một lựa chọn (hoặc nội dung gõ tay) có đúng không. Chế độ `pronounce` không so
+    /// khớp chuỗi — `option` là "correct"/"wrong" do `QuizModel.choosePronunciation` tính sẵn từ điểm phát âm.
     func isCorrect(_ option: String) -> Bool {
-        if mode == .typeAnswer {
+        switch mode {
+        case .typeAnswer:
             return acceptableTypedAnswers.contains(option.trimmingCharacters(in: .whitespaces).lowercased())
+        case .pronounce:
+            return option == "correct"
+        case .seeLetter, .hearSound:
+            return option == answer
         }
-        return option == answer
     }
 }
 
 @MainActor
 final class QuizModel: ObservableObject {
     static let questionCount = 10
+    /// Điểm phát âm tối thiểu (0…100) để tính là trả lời đúng ở chế độ `.pronounce`.
+    static let pronunciationPassScore = 50
 
     @Published private(set) var questions: [QuizQuestion] = []
     @Published private(set) var index = 0
@@ -108,7 +127,7 @@ final class QuizModel: ObservableObject {
 
     var progressText: String { "\(min(index + 1, questions.count)) / \(questions.count)" }
 
-    func start(mode: QuizMode, scope: QuizScope) {
+    func start(mode: QuizMode, scope: QuizScope, pronunciationTarget: PronunciationTarget = .letterName) {
         let pool = scope.pool(using: progress)
         guard pool.count >= 4 else {
             questions = []
@@ -116,7 +135,7 @@ final class QuizModel: ObservableObject {
         }
         let count = min(Self.questionCount, pool.count)
         questions = pool.shuffled().prefix(count).map { letter in
-            makeQuestion(for: letter, mode: mode, pool: pool)
+            makeQuestion(for: letter, mode: mode, pool: pool, pronunciationTarget: pronunciationTarget)
         }
         index = 0
         score = 0
@@ -124,10 +143,11 @@ final class QuizModel: ObservableObject {
         missedLetters = []
     }
 
-    private func makeQuestion(for letter: HangulLetter, mode: QuizMode, pool: [HangulLetter]) -> QuizQuestion {
-        // Chế độ gõ tay không cần lựa chọn sẵn.
-        guard mode != .typeAnswer else {
-            return QuizQuestion(letter: letter, mode: mode, options: [])
+    private func makeQuestion(for letter: HangulLetter, mode: QuizMode, pool: [HangulLetter],
+                               pronunciationTarget: PronunciationTarget) -> QuizQuestion {
+        // Chế độ gõ tay / đọc to không cần lựa chọn sẵn.
+        guard mode != .typeAnswer, mode != .pronounce else {
+            return QuizQuestion(letter: letter, mode: mode, options: [], pronunciationTarget: pronunciationTarget)
         }
         let correct = mode == .seeLetter ? letter.romanization : letter.character
         let distractorSource = (pool.count >= 4 ? pool : HangulData.all)
@@ -158,15 +178,40 @@ final class QuizModel: ObservableObject {
         index += 1
         selected = nil
     }
+
+    /// Chấm câu hỏi chế độ `.pronounce` từ điểm phát âm đã tính (`PronunciationScorer`), thay vì
+    /// so khớp một lựa chọn đã bấm. Đúng khi điểm đạt `pronunciationPassScore` trở lên.
+    @discardableResult
+    func choosePronunciation(score: Int?) -> Bool {
+        guard selected == nil, let current else { return false }
+        let isCorrect = (score ?? 0) >= Self.pronunciationPassScore
+        selected = isCorrect ? "correct" : "wrong"
+        if isCorrect {
+            self.score += 1
+        } else {
+            missedLetters.append(current.letter)
+        }
+        progress.record(current.letter, correct: isCorrect)
+        return isCorrect
+    }
 }
 
 struct QuizView: View {
     let language: AppLanguage
 
     @StateObject private var model = QuizModel()
+    @ObservedObject private var pronunciation = PronunciationService.shared
     @State private var mode: QuizMode = .seeLetter
     @State private var scope: QuizScope = .all
+    @State private var pronunciationTarget: PronunciationTarget = .letterName
     @State private var typedAnswer = ""
+    @State private var recognizedPronunciation = ""
+    @State private var pronounceResult: PronounceCheckResult?
+
+    private enum PronounceCheckResult: Equatable {
+        case empty
+        case scored(Int)
+    }
 
     private let haptics = UINotificationFeedbackGenerator()
 
@@ -174,6 +219,10 @@ struct QuizView: View {
         NavigationStack {
             content
                 .navigationTitle(L.quizTitle(language))
+        }
+        .onDisappear {
+            // Rời tab Quiz khi đang ghi âm dở thì phải dừng, không để mic treo.
+            if pronunciation.isRecording { pronunciation.stopRecording() }
         }
     }
 
@@ -210,6 +259,13 @@ struct QuizView: View {
             }
             .pickerStyle(.menu)
 
+            if mode == .pronounce {
+                Picker(L.pronunciationTargetLabel(language), selection: $pronunciationTarget) {
+                    ForEach(PronunciationTarget.allCases) { Text($0.label(language)).tag($0) }
+                }
+                .pickerStyle(.segmented)
+            }
+
             if scope == .due && ProgressStore.shared.dueLetters.count < 4 {
                 Text(L.quizNothingDue(language))
                     .font(.footnote)
@@ -219,7 +275,9 @@ struct QuizView: View {
 
             Button(L.startQuiz(language)) {
                 typedAnswer = ""
-                model.start(mode: mode, scope: scope)
+                recognizedPronunciation = ""
+                pronounceResult = nil
+                model.start(mode: mode, scope: scope, pronunciationTarget: pronunciationTarget)
             }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
@@ -246,6 +304,9 @@ struct QuizView: View {
                     if question.mode == .seeLetter {
                         Text(question.letter.character)
                             .font(.system(size: 88, weight: .medium))
+                    } else if question.mode == .pronounce {
+                        Text(question.pronunciationTarget.displayText(for: question.letter))
+                            .font(.system(size: question.pronunciationTarget == .letterName ? 88 : 44, weight: .medium))
                     } else {
                         Button {
                             SpeechService.shared.speak(question.letter)
@@ -264,6 +325,8 @@ struct QuizView: View {
 
                 if question.mode == .typeAnswer {
                     typedAnswerField(question)
+                } else if question.mode == .pronounce {
+                    pronounceField(question)
                 } else {
                     VStack(spacing: 10) {
                         ForEach(question.options, id: \.self) { option in
@@ -301,6 +364,8 @@ struct QuizView: View {
                     Button(model.index + 1 < model.questions.count ? L.nextQuestion(language) : L.seeResult(language)) {
                         model.advance()
                         typedAnswer = ""
+                        recognizedPronunciation = ""
+                        pronounceResult = nil
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
@@ -331,6 +396,93 @@ struct QuizView: View {
                 .controlSize(.large)
                 .disabled(model.selected != nil || typedAnswer.trimmingCharacters(in: .whitespaces).isEmpty)
         }
+    }
+
+    private func pronounceField(_ question: QuizQuestion) -> some View {
+        VStack(spacing: 10) {
+            Button {
+                togglePronunciationRecording(question)
+            } label: {
+                Label(pronunciation.isRecording ? L.stopRecording(language) : L.recordPronunciation(language),
+                      systemImage: pronunciation.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .tint(pronunciation.isRecording ? .red : .accentColor)
+            .disabled(model.selected != nil)
+
+            if pronunciation.isRecording {
+                AudioLevelMeter(level: pronunciation.audioLevel)
+                    .frame(maxWidth: 240)
+            }
+
+            if let pronounceResult {
+                pronounceResultView(pronounceResult)
+            }
+
+            if pronunciation.authorizationStatus == .denied {
+                Text(L.pronunciationPermissionDenied(language))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            } else if !pronunciation.isOnDeviceRecognitionAvailable {
+                Text(L.pronunciationOnDeviceUnavailable(language))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func pronounceResultView(_ result: PronounceCheckResult) -> some View {
+        switch result {
+        case .empty:
+            Text(L.pronunciationEmpty(language))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        case .scored:
+            if !recognizedPronunciation.isEmpty {
+                Text("\(L.youSaid(language)): \(recognizedPronunciation)")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// Bắt đầu/dừng ghi âm (hoặc tự dừng khi im lặng); khi dừng thì chấm điểm phát âm và ghi nhận
+    /// câu trả lời ngay (không cần nút Kiểm tra riêng).
+    private func togglePronunciationRecording(_ question: QuizQuestion) {
+        if pronunciation.isRecording {
+            finishPronunciationRecording(question, recognized: pronunciation.stopRecording())
+        } else {
+            recognizedPronunciation = ""
+            pronounceResult = nil
+            Task {
+                if pronunciation.authorizationStatus != .authorized {
+                    guard await pronunciation.requestAuthorization() else { return }
+                }
+                pronunciation.startRecording { recognized in
+                    finishPronunciationRecording(question, recognized: recognized)
+                }
+            }
+        }
+    }
+
+    private func finishPronunciationRecording(_ question: QuizQuestion, recognized: String) {
+        guard model.selected == nil else { return }
+        recognizedPronunciation = recognized
+        let score = PronunciationScorer.score(recognized: recognized, expected: question.answer)
+        pronounceResult = score.map(PronounceCheckResult.scored) ?? .empty
+        let correct = model.choosePronunciation(score: score)
+        haptics.notificationOccurred(correct ? .success : .error)
+        if correct {
+            SoundEffects.shared.playCorrect()
+        } else {
+            SoundEffects.shared.playWrong()
+        }
+        SpeechService.shared.speak(question.letter)
     }
 
     /// Xử lý chung cho cả bấm lựa chọn lẫn gõ đáp án: ghi nhận, rung, phát âm thanh + đọc chữ.
@@ -371,7 +523,11 @@ struct QuizView: View {
                     missedList
                 }
 
-                Button(L.tryAgain(language)) { model.start(mode: mode, scope: scope) }
+                Button(L.tryAgain(language)) {
+                    recognizedPronunciation = ""
+                    pronounceResult = nil
+                    model.start(mode: mode, scope: scope, pronunciationTarget: pronunciationTarget)
+                }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
             }

@@ -82,6 +82,22 @@ struct QuizModelTests {
         #expect(model.questions.allSatisfy { $0.prompt(.vi) == L.quizTypePrompt(.vi) })
     }
 
+    @Test func pronounceQuestionsHaveNoPresetOptionsAndAnswerIsSpokenForm() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all)
+        #expect(model.questions.allSatisfy { $0.options.isEmpty })
+        #expect(model.questions.allSatisfy { $0.prompt(.vi) == L.quizPronouncePrompt(.vi) })
+        #expect(model.questions.allSatisfy { $0.answer == $0.letter.spoken })
+        #expect(model.questions.allSatisfy { $0.pronunciationTarget == .letterName })
+    }
+
+    @Test func pronounceQuestionsUseExampleWordWhenTargetIsExampleWord() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all, pronunciationTarget: .exampleWord)
+        #expect(model.questions.allSatisfy { $0.pronunciationTarget == .exampleWord })
+        #expect(model.questions.allSatisfy { $0.answer == $0.letter.exampleWord })
+    }
+
     @Test func typeAnswerAcceptsAnyRomanizationVariantCaseInsensitively() {
         let question = QuizQuestion(letter: HangulData.basicConsonants[0], mode: .typeAnswer, options: [])
         // ㄱ: romanization "g / k" — cả hai đều phải được chấp nhận, không phân biệt hoa/thường/khoảng trắng.
@@ -156,6 +172,42 @@ struct QuizModelTests {
         _ = model.choose(question.answer)
         #expect(store.entry(for: question.letter).correct == 1)
         #expect(store.entry(for: question.letter).box == 1)
+    }
+
+    @Test func choosePronunciationAtOrAboveThresholdCountsAsCorrect() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all)
+
+        #expect(model.choosePronunciation(score: QuizModel.pronunciationPassScore) == true)
+        #expect(model.score == 1)
+        #expect(model.missedLetters.isEmpty)
+    }
+
+    @Test func choosePronunciationBelowThresholdCountsAsWrongAndRecordsMissed() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all)
+        let letter = model.current!.letter
+
+        #expect(model.choosePronunciation(score: QuizModel.pronunciationPassScore - 1) == false)
+        #expect(model.score == 0)
+        #expect(model.missedLetters == [letter])
+    }
+
+    @Test func choosePronunciationTreatsNilScoreAsWrong() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all)
+
+        #expect(model.choosePronunciation(score: nil) == false)
+        #expect(model.score == 0)
+    }
+
+    @Test func choosePronunciationTwiceIsIgnored() {
+        let (model, _) = makeModel()
+        model.start(mode: .pronounce, scope: .all)
+
+        #expect(model.choosePronunciation(score: 100) == true)
+        #expect(model.choosePronunciation(score: 100) == false)
+        #expect(model.score == 1)
     }
 
     // MARK: Tiến trình

@@ -93,6 +93,7 @@ enum L {
         en: "An app to learn the Korean alphabet: flashcards, quizzes, writing practice and pronunciation."
     )
     static let meaning = Bilingual(vi: "Nghĩa", en: "Meaning")
+    static let pronunciationTip = Bilingual(vi: "Mẹo phát âm", en: "Pronunciation tip")
 
     // Tiến độ
     static let progress = Bilingual(vi: "Tiến độ", en: "Progress")
@@ -196,4 +197,29 @@ enum L {
     static let quizTypePrompt = Bilingual(vi: "Chữ này đọc là gì? Gõ cách đọc:", en: "How is this letter read? Type it:")
     static let quizTypePlaceholder = Bilingual(vi: "cách đọc...", en: "romanization...")
     static let checkAnswer = Bilingual(vi: "Kiểm tra", en: "Check")
+
+    // Chấm điểm phát âm
+    static let pronunciationCheckTitle = Bilingual(vi: "Kiểm tra phát âm", en: "Check your pronunciation")
+    static let recordPronunciation = Bilingual(vi: "Ghi âm", en: "Record")
+    static let stopRecording = Bilingual(vi: "Dừng & chấm điểm", en: "Stop & score")
+    static let youSaid = Bilingual(vi: "Bạn đọc", en: "You said")
+    static let pronunciationScoreGreat = Bilingual(vi: "Phát âm chuẩn! 🎉", en: "Great pronunciation! 🎉")
+    static let pronunciationScoreOk = Bilingual(vi: "Khá ổn, luyện thêm cho chuẩn nhé", en: "Not bad — keep practicing for a closer match")
+    static let pronunciationScoreLow = Bilingual(vi: "Chưa khớp lắm, nghe lại rồi thử lại nhé", en: "Doesn't match yet — listen again and try once more")
+    static let pronunciationEmpty = Bilingual(vi: "Không nghe rõ, thử lại nhé", en: "Couldn't make out what you said — try again")
+    static let pronunciationPermissionDenied = Bilingual(
+        vi: "Cần quyền micro và nhận diện giọng nói để chấm điểm phát âm. Bật trong Cài đặt iOS ▸ Quyền riêng tư.",
+        en: "Microphone and speech recognition access are needed to score pronunciation. Enable them in iOS Settings ▸ Privacy."
+    )
+    static let pronunciationOnDeviceUnavailable = Bilingual(
+        vi: "Thiết bị này chưa hỗ trợ nhận diện giọng nói tiếng Hàn ngay trên máy.",
+        en: "This device doesn't support on-device Korean speech recognition yet."
+    )
+    static let pronunciationTargetLabel = Bilingual(vi: "Đọc theo", en: "Say")
+    static let pronunciationTargetLetterName = Bilingual(vi: "Tên chữ", en: "Letter name")
+    static let pronunciationTargetExampleWord = Bilingual(vi: "Từ ví dụ", en: "Example word")
+
+    // Kiểm tra kiểu đọc to (chấm điểm phát âm)
+    static let quizModePronounce = Bilingual(vi: "Phát âm", en: "Pronounce")
+    static let quizPronouncePrompt = Bilingual(vi: "Đọc to:", en: "Say it aloud:")
 }

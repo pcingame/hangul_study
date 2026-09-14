@@ -34,6 +34,8 @@ struct HangulLetter: Identifiable, Equatable {
     let exampleWord: String
     let exampleRomanization: String
     let exampleMeaning: Bilingual
+    /// Mẹo phát âm ngắn gọn, hướng tới người Việt: vị trí lưỡi/môi, so sánh với âm tiếng Việt gần giống, lỗi hay gặp.
+    let pronunciationTip: Bilingual
 
     var id: String { character }
 

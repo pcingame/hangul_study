@@ -12,11 +12,14 @@ final class SpeechService {
     private init() {
         isKoreanVoiceAvailable = AVSpeechSynthesisVoice.speechVoices()
             .contains { $0.language.hasPrefix("ko") }
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
     }
 
     func speak(_ text: String) {
         guard !text.isEmpty else { return }
+        // Đặt lại category mỗi lần đọc (không chỉ lúc khởi tạo): `PronunciationService` đổi session
+        // sang `.record` khi ghi âm chấm điểm phát âm — category đó không có đường ra loa, nên nếu
+        // không tự đặt lại ở đây, các lần đọc sau khi ghi âm xong sẽ bị im lặng.
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
         try? AVAudioSession.sharedInstance().setActive(true)
 
         let utterance = AVSpeechUtterance(string: text)
