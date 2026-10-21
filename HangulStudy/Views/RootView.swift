@@ -21,6 +21,9 @@ struct RootView: View {
             SyllableBuilderView(language: language)
                 .tabItem { Label(L.buildTab(language), systemImage: "square.grid.2x2") }
 
+            StudyTabView(language: language)
+                .tabItem { Label(L.studyTab(language), systemImage: "book") }
+
             QuizView(language: language)
                 .tabItem { Label(L.quizTab(language), systemImage: "checkmark.circle") }
 

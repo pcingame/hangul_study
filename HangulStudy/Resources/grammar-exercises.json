@@ -1,0 +1,1131 @@
+[
+ {
+  "sentence": "저______ 학생이에요.",
+  "vi": "Tôi là học sinh.",
+  "options": [
+   "는",
+   "은",
+   "를",
+   "을"
+  ],
+  "answer": "는",
+  "note": "저 không có patchim → 는.",
+  "unit": 1
+ },
+ {
+  "sentence": "선생님______ 한국 사람이에요.",
+  "vi": "Giáo viên là người Hàn Quốc.",
+  "options": [
+   "은",
+   "는",
+   "을",
+   "를"
+  ],
+  "answer": "은",
+  "note": "선생님 có patchim ㅁ → 은.",
+  "unit": 1
+ },
+ {
+  "sentence": "비______ 와요.",
+  "vi": "Trời mưa.",
+  "options": [
+   "가",
+   "이",
+   "을",
+   "를"
+  ],
+  "answer": "가",
+  "note": "비 không có patchim → chủ ngữ dùng 가.",
+  "unit": 2
+ },
+ {
+  "sentence": "동생______ 학교에 가요.",
+  "vi": "Em tôi đi học.",
+  "options": [
+   "이",
+   "가",
+   "을",
+   "를"
+  ],
+  "answer": "이",
+  "note": "동생 có patchim ㅇ → chủ ngữ dùng 이.",
+  "unit": 2
+ },
+ {
+  "sentence": "밥______ 먹어요.",
+  "vi": "Tôi ăn cơm.",
+  "options": [
+   "을",
+   "를",
+   "에",
+   "에서"
+  ],
+  "answer": "을",
+  "note": "밥 có patchim ㅂ → tân ngữ dùng 을.",
+  "unit": 3
+ },
+ {
+  "sentence": "커피______ 마셔요.",
+  "vi": "Tôi uống cà phê.",
+  "options": [
+   "를",
+   "을",
+   "에",
+   "에서"
+  ],
+  "answer": "를",
+  "note": "커피 không có patchim → tân ngữ dùng 를.",
+  "unit": 3
+ },
+ {
+  "sentence": "저는 의사______.",
+  "vi": "Tôi là bác sĩ.",
+  "options": [
+   "예요",
+   "이에요",
+   "아요",
+   "어요"
+  ],
+  "answer": "예요",
+  "note": "의사 không có patchim → 예요.",
+  "unit": 1
+ },
+ {
+  "sentence": "이것은 책______.",
+  "vi": "Đây là quyển sách.",
+  "options": [
+   "이에요",
+   "예요",
+   "아요",
+   "어요"
+  ],
+  "answer": "이에요",
+  "note": "책 có patchim ㄱ → 이에요.",
+  "unit": 1
+ },
+ {
+  "sentence": "저______ 학생이에요.",
+  "vi": "Tôi cũng là học sinh.",
+  "options": [
+   "도",
+   "를",
+   "에",
+   "에서"
+  ],
+  "answer": "도",
+  "note": "도 = “cũng”, thay cho 은/는/이/가.",
+  "unit": 6
+ },
+ {
+  "sentence": "학교______ 가요.",
+  "vi": "Tôi đi đến trường.",
+  "options": [
+   "에",
+   "이",
+   "과",
+   "하고"
+  ],
+  "answer": "에",
+  "note": "에 đứng sau nơi đến của động từ đi/đến.",
+  "unit": 4
+ },
+ {
+  "sentence": "세 시______ 만나요.",
+  "vi": "Gặp nhau lúc 3 giờ.",
+  "options": [
+   "에",
+   "에서",
+   "를",
+   "와"
+  ],
+  "answer": "에",
+  "note": "에 cũng dùng sau mốc thời gian.",
+  "unit": 5
+ },
+ {
+  "sentence": "도서관______ 공부해요.",
+  "vi": "Tôi học ở thư viện.",
+  "options": [
+   "에서",
+   "에",
+   "를",
+   "도"
+  ],
+  "answer": "에서",
+  "note": "에서 chỉ nơi diễn ra hành động.",
+  "unit": 3
+ },
+ {
+  "sentence": "친구______ 가요.",
+  "vi": "Tôi đi cùng bạn.",
+  "options": [
+   "랑",
+   "이랑",
+   "를",
+   "에서"
+  ],
+  "answer": "랑",
+  "note": "친구 không có patchim → 랑 (có patchim thì dùng 이랑).",
+  "unit": 2
+ },
+ {
+  "sentence": "밥을 먹______.",
+  "vi": "Tôi ăn cơm.",
+  "options": [
+   "어요",
+   "아요",
+   "해요",
+   "세요"
+  ],
+  "answer": "어요",
+  "note": "Gốc 먹 có nguyên âm ㅓ (không phải ㅏ/ㅗ) → 어요.",
+  "unit": 3
+ },
+ {
+  "sentence": "날씨가 좋______.",
+  "vi": "Thời tiết đẹp.",
+  "options": [
+   "아요",
+   "어요",
+   "해요",
+   "세요"
+  ],
+  "answer": "아요",
+  "note": "Gốc 좋 có nguyên âm ㅗ → 아요.",
+  "unit": 3
+ },
+ {
+  "sentence": "도서관에서 공부______.",
+  "vi": "Tôi học ở thư viện.",
+  "options": [
+   "해요",
+   "하아요",
+   "하어요",
+   "하요"
+  ],
+  "answer": "해요",
+  "note": "하다 luôn chia thành 해요.",
+  "unit": 3
+ },
+ {
+  "sentence": "저는 학교에 갑______.",
+  "vi": "Tôi đi học. (trang trọng)",
+  "options": [
+   "니다",
+   "습니다",
+   "어요",
+   "아요"
+  ],
+  "answer": "니다",
+  "note": "Gốc 가 không có patchim → thêm ㅂ vào thành 갑, rồi + 니다.",
+  "unit": 7
+ },
+ {
+  "sentence": "밥을 먹______.",
+  "vi": "Tôi ăn cơm. (trang trọng)",
+  "options": [
+   "습니다",
+   "니다",
+   "어요",
+   "아요"
+  ],
+  "answer": "습니다",
+  "note": "Gốc 먹 có patchim → 습니다.",
+  "unit": 7
+ },
+ {
+  "sentence": "저는 김치를 ______ 먹어요.",
+  "vi": "Tôi không ăn kim chi.",
+  "options": [
+   "안",
+   "못",
+   "잘",
+   "도"
+  ],
+  "answer": "안",
+  "note": "안 = không (phủ định). 못 = không thể, nghĩa khác.",
+  "unit": 3
+ },
+ {
+  "sentence": "커피를 마시______ 싶어요.",
+  "vi": "Tôi muốn uống cà phê.",
+  "options": [
+   "고",
+   "는",
+   "러",
+   "면"
+  ],
+  "answer": "고",
+  "note": "V + 고 싶다 = muốn làm gì."
+ },
+ {
+  "sentence": "여기 앉______.",
+  "vi": "Xin mời ngồi đây.",
+  "options": [
+   "으세요",
+   "세요",
+   "으시요",
+   "이에요"
+  ],
+  "answer": "으세요",
+  "note": "Gốc 앉 có patchim → 으세요.",
+  "unit": 6
+ },
+ {
+  "sentence": "어제 영화를 ______.",
+  "vi": "Hôm qua tôi đã xem phim.",
+  "options": [
+   "봤어요",
+   "봐요",
+   "볼 거예요",
+   "보세요"
+  ],
+  "answer": "봤어요",
+  "note": "Có “어제” (hôm qua) → quá khứ 았/었어요: 보 + 았어요 → 봤어요.",
+  "unit": 5
+ },
+ {
+  "sentence": "내일 친구를 ______.",
+  "vi": "Ngày mai tôi sẽ gặp bạn.",
+  "options": [
+   "만날 거예요",
+   "만났어요",
+   "만나고",
+   "만나세요"
+  ],
+  "answer": "만날 거예요",
+  "note": "Có “내일” (ngày mai) → tương lai (으)ㄹ 거예요. Gốc 만나 không có patchim → 만날 거예요."
+ },
+ {
+  "sentence": "밥을 먹______ 공부해요.",
+  "vi": "Ăn cơm rồi học bài.",
+  "options": [
+   "고",
+   "지만",
+   "러",
+   "면"
+  ],
+  "answer": "고",
+  "note": "V + 고 nối hai hành động: “và / rồi”.",
+  "unit": 5
+ },
+ {
+  "sentence": "민수 씨는 학생______?",
+  "vi": "Anh Minsu là học sinh phải không ạ?",
+  "options": [
+   "입니까",
+   "입니다",
+   "아닙니다",
+   "있습니까"
+  ],
+  "answer": "입니까",
+  "note": "Câu hỏi trang trọng dùng 입니까?, câu trả lời dùng 입니다.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 베트남 사람______.",
+  "vi": "Tôi là người Việt Nam. (trang trọng)",
+  "options": [
+   "입니다",
+   "입니까",
+   "아닙니다",
+   "있습니다"
+  ],
+  "answer": "입니다",
+  "note": "Câu khẳng định trang trọng: N + 입니다.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 의사______ 아닙니다.",
+  "vi": "Tôi không phải là bác sĩ.",
+  "options": [
+   "가",
+   "이",
+   "을",
+   "를"
+  ],
+  "answer": "가",
+  "note": "의사 không có patchim → 가 아닙니다.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 학생______ 아닙니다.",
+  "vi": "Tôi không phải là học sinh.",
+  "options": [
+   "이",
+   "가",
+   "을",
+   "를"
+  ],
+  "answer": "이",
+  "note": "학생 có patchim → 이 아닙니다.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 일본______ 왔어요.",
+  "vi": "Tôi đến từ Nhật Bản.",
+  "options": [
+   "에서",
+   "를",
+   "과",
+   "하고"
+  ],
+  "answer": "에서",
+  "note": "N + 에서 왔어요 = đến từ N.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 지금 집에 가요. 안녕히 ______.",
+  "vi": "Tôi về nhà bây giờ. Tạm biệt. (nói với người ở lại)",
+  "options": [
+   "계세요",
+   "가세요",
+   "오세요",
+   "하세요"
+  ],
+  "answer": "계세요",
+  "note": "Nói với người ở lại dùng 안녕히 계세요; người ra về dùng 안녕히 가세요.",
+  "unit": 1
+ },
+ {
+  "sentence": "저는 우산______ 있어요.",
+  "vi": "Tôi có ô.",
+  "options": [
+   "이",
+   "가",
+   "을",
+   "를"
+  ],
+  "answer": "이",
+  "note": "우산 có patchim ㄴ → 이 있어요.",
+  "unit": 2
+ },
+ {
+  "sentence": "지우개______ 없어요.",
+  "vi": "Tôi không có cục tẩy.",
+  "options": [
+   "가",
+   "이",
+   "을",
+   "를"
+  ],
+  "answer": "가",
+  "note": "지우개 không có patchim → 가 없어요.",
+  "unit": 2
+ },
+ {
+  "sentence": "볼펜______ 공책 주세요.",
+  "vi": "Cho tôi bút bi và vở.",
+  "options": [
+   "하고",
+   "에서",
+   "에",
+   "를"
+  ],
+  "answer": "하고",
+  "note": "하고 nối hai danh từ: “và”.",
+  "unit": 2
+ },
+ {
+  "sentence": "지우개______ 연필이 있어요.",
+  "vi": "Có cục tẩy và bút chì.",
+  "options": [
+   "와",
+   "과",
+   "이랑",
+   "에서"
+  ],
+  "answer": "와",
+  "note": "지우개 không có patchim → 와 (có patchim thì dùng 과).",
+  "unit": 2
+ },
+ {
+  "sentence": "학생______ 선생님이 있어요.",
+  "vi": "Có học sinh và giáo viên.",
+  "options": [
+   "과",
+   "와",
+   "랑",
+   "를"
+  ],
+  "answer": "과",
+  "note": "학생 có patchim → 과. 랑 chỉ dùng sau danh từ không patchim (có patchim là 이랑).",
+  "unit": 2
+ },
+ {
+  "sentence": "이거는 사전______.",
+  "vi": "Cái này là từ điển.",
+  "options": [
+   "이에요",
+   "예요",
+   "아니에요",
+   "있어요"
+  ],
+  "answer": "이에요",
+  "note": "사전 có patchim ㄴ → 이에요.",
+  "unit": 2
+ },
+ {
+  "sentence": "그거는 지도______.",
+  "vi": "Cái đó là bản đồ.",
+  "options": [
+   "예요",
+   "이에요",
+   "아니에요",
+   "있어요"
+  ],
+  "answer": "예요",
+  "note": "지도 không có patchim → 예요.",
+  "unit": 2
+ },
+ {
+  "sentence": "물 ______ 주세요.",
+  "vi": "Cho tôi xin ít nước.",
+  "options": [
+   "좀",
+   "에서",
+   "과",
+   "이"
+  ],
+  "answer": "좀",
+  "note": "N + 좀 주세요: lời nhờ lịch sự hơn.",
+  "unit": 2
+ },
+ {
+  "sentence": "저는 책______ 읽어요.",
+  "vi": "Tôi đọc sách.",
+  "options": [
+   "을",
+   "를",
+   "에서",
+   "에"
+  ],
+  "answer": "을",
+  "note": "책 có patchim ㄱ → tân ngữ dùng 을.",
+  "unit": 3
+ },
+ {
+  "sentence": "공원______ 산책해요.",
+  "vi": "Tôi đi dạo ở công viên.",
+  "options": [
+   "에서",
+   "에",
+   "를",
+   "이"
+  ],
+  "answer": "에서",
+  "note": "Nơi diễn ra hành động dùng 에서.",
+  "unit": 3
+ },
+ {
+  "sentence": "시장______ 옷을 사요.",
+  "vi": "Tôi mua quần áo ở chợ.",
+  "options": [
+   "에서",
+   "를",
+   "이",
+   "과"
+  ],
+  "answer": "에서",
+  "note": "시장 là nơi diễn ra việc mua → 에서.",
+  "unit": 3
+ },
+ {
+  "sentence": "친구는 도서관에서 책을 읽______.",
+  "vi": "Bạn tôi đọc sách ở thư viện.",
+  "options": [
+   "어요",
+   "아요",
+   "해요",
+   "세요"
+  ],
+  "answer": "어요",
+  "note": "Gốc 읽 có nguyên âm ㅣ (không phải ㅏ/ㅗ) → 어요.",
+  "unit": 3
+ },
+ {
+  "sentence": "한국 음식이 맛있______.",
+  "vi": "Món ăn Hàn ngon.",
+  "options": [
+   "어요",
+   "아요",
+   "해요",
+   "봐요"
+  ],
+  "answer": "어요",
+  "note": "Gốc 맛있 có ㅣ → 어요.",
+  "unit": 3
+ },
+ {
+  "sentence": "저는 일요일에 집에서 쉬______.",
+  "vi": "Chủ nhật tôi nghỉ ở nhà.",
+  "options": [
+   "어요",
+   "아요",
+   "해요",
+   "봐요"
+  ],
+  "answer": "어요",
+  "note": "Gốc 쉬 có ㅟ → 어요.",
+  "unit": 3
+ },
+ {
+  "sentence": "은행이 어디______ 있어요?",
+  "vi": "Ngân hàng ở đâu?",
+  "options": [
+   "에",
+   "에서",
+   "과",
+   "이"
+  ],
+  "answer": "에",
+  "note": "Vị trí dùng 에 있어요 (không dùng 에서).",
+  "unit": 4
+ },
+ {
+  "sentence": "저는 내일 병원______ 가요.",
+  "vi": "Ngày mai tôi đến bệnh viện.",
+  "options": [
+   "에",
+   "에서",
+   "과",
+   "이"
+  ],
+  "answer": "에",
+  "note": "Nơi đến của 가요/와요 dùng 에.",
+  "unit": 4
+ },
+ {
+  "sentence": "여기______ 우리 학교예요.",
+  "vi": "Đây là trường của chúng tôi.",
+  "options": [
+   "가",
+   "를",
+   "에서",
+   "에"
+  ],
+  "answer": "가",
+  "note": "여기가 N이에요/예요 = “Đây là N”.",
+  "unit": 4
+ },
+ {
+  "sentence": "우체국은 은행______ 있어요.",
+  "vi": "Bưu điện ở bên cạnh ngân hàng.",
+  "options": [
+   "옆에",
+   "옆에서",
+   "옆을",
+   "옆이"
+  ],
+  "answer": "옆에",
+  "note": "Từ chỉ vị trí + 에 + 있어요.",
+  "unit": 4
+ },
+ {
+  "sentence": "친구가 우리 집에 ______.",
+  "vi": "Bạn tôi đến nhà chúng tôi.",
+  "options": [
+   "와요",
+   "가요",
+   "있어요",
+   "없어요"
+  ],
+  "answer": "와요",
+  "note": "와요 = đến (về phía nơi người nói).",
+  "unit": 4
+ },
+ {
+  "sentence": "저는 지금 도서관에 ______.",
+  "vi": "Tôi đi đến thư viện.",
+  "options": [
+   "가요",
+   "있어요",
+   "없어요",
+   "이에요"
+  ],
+  "answer": "가요",
+  "note": "N에 가요 = đi đến N.",
+  "unit": 4
+ },
+ {
+  "sentence": "저는 교실에 ______.",
+  "vi": "Tôi không ở trong lớp.",
+  "options": [
+   "없어요",
+   "있어요",
+   "가요",
+   "와요"
+  ],
+  "answer": "없어요",
+  "note": "없어요 = không có / không ở.",
+  "unit": 4
+ },
+ {
+  "sentence": "월요일______ 학교에 가요.",
+  "vi": "Thứ Hai tôi đi học.",
+  "options": [
+   "에",
+   "에서",
+   "를",
+   "과"
+  ],
+  "answer": "에",
+  "note": "Thứ trong tuần + 에.",
+  "unit": 5
+ },
+ {
+  "sentence": "어제 친구를 ______.",
+  "vi": "Hôm qua tôi đã gặp bạn.",
+  "options": [
+   "만났어요",
+   "만나요",
+   "만날 거예요",
+   "만나세요"
+  ],
+  "answer": "만났어요",
+  "note": "어제 → quá khứ: 만나 + 았어요 → 만났어요.",
+  "unit": 5
+ },
+ {
+  "sentence": "지난주에 뭐 ______?",
+  "vi": "Tuần trước bạn đã làm gì?",
+  "options": [
+   "했어요",
+   "해요",
+   "하세요",
+   "할까요"
+  ],
+  "answer": "했어요",
+  "note": "Tuần trước → quá khứ: 하다 → 했어요.",
+  "unit": 5
+ },
+ {
+  "sentence": "어제 저는 도서관에 ______.",
+  "vi": "Hôm qua tôi đã đến thư viện.",
+  "options": [
+   "갔어요",
+   "가요",
+   "와요",
+   "가세요"
+  ],
+  "answer": "갔어요",
+  "note": "가 + 았어요 → 갔어요.",
+  "unit": 5
+ },
+ {
+  "sentence": "내일______ 약속이 있어요.",
+  "vi": "Ngày mai tôi có hẹn.",
+  "options": [
+   "은",
+   "는",
+   "에",
+   "를"
+  ],
+  "answer": "은",
+  "note": "내일 không dùng 에; 내일 có patchim ㄹ → 은.",
+  "unit": 5
+ },
+ {
+  "sentence": "친구를 만나______ 영화를 봤어요.",
+  "vi": "Tôi gặp bạn rồi xem phim.",
+  "options": [
+   "고",
+   "지만",
+   "는",
+   "세요"
+  ],
+  "answer": "고",
+  "note": "V + 고 nối hai hành động theo thứ tự.",
+  "unit": 5
+ },
+ {
+  "sentence": "생일은 ______월 이십 일이에요.",
+  "vi": "Sinh nhật là ngày 20 tháng 6.",
+  "options": [
+   "유",
+   "육",
+   "시",
+   "이"
+  ],
+  "answer": "유",
+  "note": "Tháng 6 đọc là 유월, tháng 10 đọc là 시월.",
+  "unit": 5
+ },
+ {
+  "sentence": "오늘은 ______월 오 일이에요.",
+  "vi": "Hôm nay là ngày 5 tháng 10.",
+  "options": [
+   "시",
+   "십",
+   "열",
+   "일"
+  ],
+  "answer": "시",
+  "note": "Tháng 10 đọc là 시월.",
+  "unit": 5
+ },
+ {
+  "sentence": "커피 한 ______ 주세요.",
+  "vi": "Cho tôi một cốc cà phê.",
+  "options": [
+   "잔",
+   "병",
+   "그릇",
+   "권"
+  ],
+  "answer": "잔",
+  "note": "Đồ uống trong ly, cốc đếm bằng 잔.",
+  "unit": 6
+ },
+ {
+  "sentence": "맥주 두 ______ 주세요.",
+  "vi": "Cho tôi hai chai bia.",
+  "options": [
+   "병",
+   "잔",
+   "그릇",
+   "권"
+  ],
+  "answer": "병",
+  "note": "Đồ uống đựng trong chai đếm bằng 병.",
+  "unit": 6
+ },
+ {
+  "sentence": "비빔밥 한 ______ 주세요.",
+  "vi": "Cho tôi một tô cơm trộn.",
+  "options": [
+   "그릇",
+   "잔",
+   "병",
+   "권"
+  ],
+  "answer": "그릇",
+  "note": "Món ăn đựng trong bát, tô đếm bằng 그릇.",
+  "unit": 6
+ },
+ {
+  "sentence": "책 세 ______ 샀어요.",
+  "vi": "Tôi đã mua ba quyển sách.",
+  "options": [
+   "권",
+   "잔",
+   "병",
+   "그릇"
+  ],
+  "answer": "권",
+  "note": "Sách, vở đếm bằng 권.",
+  "unit": 6
+ },
+ {
+  "sentence": "사과 ______ 개 주세요.",
+  "vi": "Cho tôi hai quả táo.",
+  "options": [
+   "두",
+   "둘",
+   "이",
+   "하나"
+  ],
+  "answer": "두",
+  "note": "Trước đơn vị đếm, 둘 đổi thành 두.",
+  "unit": 6
+ },
+ {
+  "sentence": "이 옷이 ______.",
+  "vi": "Bộ đồ này rẻ.",
+  "options": [
+   "싸요",
+   "싸세요",
+   "싸이에요",
+   "싸다요"
+  ],
+  "answer": "싸요",
+  "note": "Tính từ + 아요/어요: 싸다 → 싸요.",
+  "unit": 6
+ },
+ {
+  "sentence": "잠깐만 기다리______.",
+  "vi": "Xin hãy đợi một chút.",
+  "options": [
+   "세요",
+   "으세요",
+   "어요",
+   "아요"
+  ],
+  "answer": "세요",
+  "note": "Gốc 기다리 không có patchim → 세요.",
+  "unit": 6
+ },
+ {
+  "sentence": "책을 ______.",
+  "vi": "Xin hãy đọc sách.",
+  "options": [
+   "읽으세요",
+   "읽세요",
+   "읽으세",
+   "읽으시요"
+  ],
+  "answer": "읽으세요",
+  "note": "Gốc 읽 có patchim → 으세요.",
+  "unit": 6
+ },
+ {
+  "sentence": "사과______ 주세요.",
+  "vi": "Cho tôi cả táo nữa.",
+  "options": [
+   "도",
+   "에서",
+   "에",
+   "과"
+  ],
+  "answer": "도",
+  "note": "도 = “cũng, cả”, thêm vào món đã nói.",
+  "unit": 6
+ },
+ {
+  "sentence": "이 바지는 ______ 예요?",
+  "vi": "Quần này bao nhiêu tiền?",
+  "options": [
+   "얼마",
+   "무엇",
+   "어디",
+   "누구"
+  ],
+  "answer": "얼마",
+  "note": "Hỏi giá: 얼마예요?",
+  "unit": 6
+ },
+ {
+  "sentence": "사과 세 개에 ______ 원이에요.",
+  "vi": "Ba quả táo giá 3.000 won.",
+  "options": [
+   "삼천",
+   "세천",
+   "셋천",
+   "삼백"
+  ],
+  "answer": "삼천",
+  "note": "Tiền dùng số Hán Hàn: 삼천 원.",
+  "unit": 6
+ },
+ {
+  "sentence": "오늘은 날씨가 좋______.",
+  "vi": "Hôm nay thời tiết đẹp. (trang trọng)",
+  "options": [
+   "습니다",
+   "니다",
+   "습니까",
+   "십니다"
+  ],
+  "answer": "습니다",
+  "note": "Gốc 좋 có patchim → 습니다.",
+  "unit": 7
+ },
+ {
+  "sentence": "저는 물을 마십______.",
+  "vi": "Tôi uống nước. (trang trọng)",
+  "options": [
+   "니다",
+   "습니다",
+   "니까",
+   "어요"
+  ],
+  "answer": "니다",
+  "note": "Gốc 마시 không có patchim → ㅂ + 니다 = 마십니다.",
+  "unit": 7
+ },
+ {
+  "sentence": "여름에는 ______.",
+  "vi": "Mùa hè thì nóng.",
+  "options": [
+   "더워요",
+   "덥어요",
+   "더와요",
+   "덥아요"
+  ],
+  "answer": "더워요",
+  "note": "ㅂ bất quy tắc: 덥다 → 더워요.",
+  "unit": 7
+ },
+ {
+  "sentence": "김치는 ______.",
+  "vi": "Kim chi cay.",
+  "options": [
+   "매워요",
+   "맵어요",
+   "맵아요",
+   "매와요"
+  ],
+  "answer": "매워요",
+  "note": "ㅂ bất quy tắc: 맵다 → 매워요.",
+  "unit": 7
+ },
+ {
+  "sentence": "저는 매일 음악을 ______.",
+  "vi": "Mỗi ngày tôi nghe nhạc.",
+  "options": [
+   "들어요",
+   "듣어요",
+   "듣아요",
+   "들아요"
+  ],
+  "answer": "들어요",
+  "note": "ㄷ bất quy tắc: 듣다 → 들어요.",
+  "unit": 7
+ },
+ {
+  "sentence": "공원에서 ______.",
+  "vi": "Tôi đi bộ ở công viên.",
+  "options": [
+   "걸어요",
+   "걷어요",
+   "걷아요",
+   "걸아요"
+  ],
+  "answer": "걸어요",
+  "note": "ㄷ bất quy tắc: 걷다 → 걸어요.",
+  "unit": 7
+ },
+ {
+  "sentence": "한국어는 어렵______ 재미있어요.",
+  "vi": "Tiếng Hàn khó nhưng thú vị.",
+  "options": [
+   "지만",
+   "고",
+   "세요",
+   "어서"
+  ],
+  "answer": "지만",
+  "note": "지만 = “nhưng”, nối hai vế trái ngược.",
+  "unit": 7
+ },
+ {
+  "sentence": "봄은 따뜻하______ 꽃이 예뻐요.",
+  "vi": "Mùa xuân ấm và hoa đẹp.",
+  "options": [
+   "고",
+   "지만",
+   "세요",
+   "러"
+  ],
+  "answer": "고",
+  "note": "고 nối hai vế cùng chiều: “và”.",
+  "unit": 7
+ },
+ {
+  "sentence": "오늘 날씨가 ______?",
+  "vi": "Hôm nay thời tiết thế nào?",
+  "options": [
+   "어때요",
+   "뭐예요",
+   "어디예요",
+   "누구예요"
+  ],
+  "answer": "어때요",
+  "note": "Hỏi thời tiết: 날씨가 어때요?",
+  "unit": 7
+ },
+ {
+  "sentence": "비가 ______.",
+  "vi": "Trời mưa.",
+  "options": [
+   "와요",
+   "가요",
+   "있어요",
+   "없어요"
+  ],
+  "answer": "와요",
+  "note": "비가 오다 = trời mưa.",
+  "unit": 7
+ },
+ {
+  "sentence": "같이 영화를 ______?",
+  "vi": "Cùng xem phim nhé?",
+  "options": [
+   "볼까요",
+   "봅까요",
+   "보을까요",
+   "보까요"
+  ],
+  "answer": "볼까요",
+  "note": "Gốc 보 không có patchim → ㄹ까요: 볼까요.",
+  "unit": 8
+ },
+ {
+  "sentence": "뭐 ______?",
+  "vi": "Ăn gì nhé?",
+  "options": [
+   "먹을까요",
+   "먹까요",
+   "먹을게요",
+   "먹어요"
+  ],
+  "answer": "먹을까요",
+  "note": "Gốc 먹 có patchim → 을까요 (đề nghị).",
+  "unit": 8
+ },
+ {
+  "sentence": "______ 가방은 제 거예요.",
+  "vi": "Cái cặp này là của tôi.",
+  "options": [
+   "이",
+   "그",
+   "저",
+   "어느"
+  ],
+  "answer": "이",
+  "note": "이 = này (gần người nói).",
+  "unit": 8
+ },
+ {
+  "sentence": "______ 사람은 누구예요?",
+  "vi": "Người kia là ai? (xa cả hai người)",
+  "options": [
+   "저",
+   "이",
+   "그",
+   "어느"
+  ],
+  "answer": "저",
+  "note": "저 = kia (xa cả người nói lẫn người nghe).",
+  "unit": 8
+ },
+ {
+  "sentence": "날씨가 정말 좋______.",
+  "vi": "Thời tiết đẹp thật đấy!",
+  "options": [
+   "네요",
+   "어요",
+   "습니다",
+   "세요"
+  ],
+  "answer": "네요",
+  "note": "V/A + 네요 diễn tả cảm nhận, ngạc nhiên.",
+  "unit": 8
+ },
+ {
+  "sentence": "사람이 많______.",
+  "vi": "Đông người thật đấy!",
+  "options": [
+   "네요",
+   "아요",
+   "세요",
+   "어서"
+  ],
+  "answer": "네요",
+  "note": "많 + 네요 = 많네요.",
+  "unit": 8
+ },
+ {
+  "sentence": "오늘 오후에 같이 테니스를 ______?",
+  "vi": "Chiều nay cùng chơi tennis nhé?",
+  "options": [
+   "칠까요",
+   "쳐요",
+   "치세요",
+   "칩니다"
+  ],
+  "answer": "칠까요",
+  "note": "Gốc 치 không có patchim → ㄹ까요: 칠까요.",
+  "unit": 8
+ }
+]

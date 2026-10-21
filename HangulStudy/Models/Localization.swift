@@ -219,6 +219,16 @@ enum L {
     static let pronunciationTargetLetterName = Bilingual(vi: "Tên chữ", en: "Letter name")
     static let pronunciationTargetExampleWord = Bilingual(vi: "Từ ví dụ", en: "Example word")
 
+    // Từ vựng & ngữ pháp
+    static let studyTab = Bilingual(vi: "Từ vựng", en: "Vocabulary")
+    static let studyTitle = Bilingual(vi: "Giáo trình", en: "Course")
+    static let studyVocabulary = Bilingual(vi: "Từ vựng", en: "Words")
+    static let studyGrammar = Bilingual(vi: "Ngữ pháp", en: "Grammar")
+    static let studyExercises = Bilingual(vi: "Bài tập", en: "Exercises")
+    static let studyUnit = Bilingual(vi: "Bài", en: "Unit")
+    static let studyAllUnits = Bilingual(vi: "Tất cả", en: "All")
+    static let studyEmpty = Bilingual(vi: "Chưa có nội dung cho mục này", en: "Nothing here yet")
+
     // Ghi âm & dịch
     static let speechTranslateTitle = Bilingual(vi: "Ghi âm & dịch", en: "Record & translate")
     static let speechTranslateSubtitle = Bilingual(vi: "Nói tiếng Hàn, dịch ngay", en: "Speak Korean, get a translation")
