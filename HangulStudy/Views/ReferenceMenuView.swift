@@ -19,6 +19,14 @@ struct ReferenceMenuView: View {
                 } label: {
                     row(icon: "textformat.123", title: L.numbersTitle(language), subtitle: L.numbersSubtitle(language))
                 }
+
+                if #available(iOS 18.0, *) {
+                    NavigationLink {
+                        SpeechTranslateView(language: language)
+                    } label: {
+                        row(icon: "mic.badge.plus", title: L.speechTranslateTitle(language), subtitle: L.speechTranslateSubtitle(language))
+                    }
+                }
             }
             .navigationTitle(L.referenceTitle(language))
             .navigationBarTitleDisplayMode(.inline)

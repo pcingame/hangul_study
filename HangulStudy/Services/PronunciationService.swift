@@ -17,7 +17,9 @@ final class PronunciationService: NSObject, ObservableObject {
     /// Im lặng liên tục từ sau khi đã nghe thấy tiếng nói bằng ngần này thì tự động dừng ghi âm.
     private static let autoStopSilenceDuration: TimeInterval = 1.2
     /// Giới hạn an toàn: dù vẫn đang nói cũng tự dừng sau ngần này, tránh ghi âm vô hạn.
-    private static let maximumRecordingDuration: TimeInterval = 8
+    private static let defaultMaximumRecordingDuration: TimeInterval = 8
+    private var maximumRecordingDuration = PronunciationService.defaultMaximumRecordingDuration
+    private var stopsOnSilence = true
 
     @Published private(set) var isRecording = false
     @Published private(set) var authorizationStatus: AuthorizationStatus = .notDetermined
@@ -64,8 +66,10 @@ final class PronunciationService: NSObject, ObservableObject {
     /// Bắt đầu ghi âm + nhận diện trực tiếp; tự động dừng sau khoảng lặng hoặc quá thời lượng tối đa.
     /// - Parameter onAutoStop: gọi (kèm văn bản nhận diện được) nếu ghi âm tự dừng — không gọi nếu
     ///   người dùng tự bấm dừng bằng `stopRecording()`.
-    func startRecording(onAutoStop: ((String) -> Void)? = nil) {
+    func startRecording(maxDuration: TimeInterval = defaultMaximumRecordingDuration, stopOnSilence: Bool = true, onAutoStop: ((String) -> Void)? = nil) {
         guard !isRecording, let recognizer, recognizer.isAvailable else { return }
+        maximumRecordingDuration = maxDuration
+        stopsOnSilence = stopOnSilence
 
         task?.cancel()
         task = nil
@@ -149,11 +153,11 @@ final class PronunciationService: NSObject, ObservableObject {
             lastLoudAt = now
         }
 
-        if hasDetectedSpeech, let lastLoudAt, now.timeIntervalSince(lastLoudAt) >= Self.autoStopSilenceDuration {
+        if stopsOnSilence, hasDetectedSpeech, let lastLoudAt, now.timeIntervalSince(lastLoudAt) >= Self.autoStopSilenceDuration {
             autoStop()
             return
         }
-        if let recordingStartedAt, now.timeIntervalSince(recordingStartedAt) >= Self.maximumRecordingDuration {
+        if let recordingStartedAt, now.timeIntervalSince(recordingStartedAt) >= maximumRecordingDuration {
             autoStop()
         }
     }

@@ -219,6 +219,17 @@ enum L {
     static let pronunciationTargetLetterName = Bilingual(vi: "Tên chữ", en: "Letter name")
     static let pronunciationTargetExampleWord = Bilingual(vi: "Từ ví dụ", en: "Example word")
 
+    // Ghi âm & dịch
+    static let speechTranslateTitle = Bilingual(vi: "Ghi âm & dịch", en: "Record & translate")
+    static let speechTranslateSubtitle = Bilingual(vi: "Nói tiếng Hàn, dịch ngay", en: "Speak Korean, get a translation")
+    static let holdToRecord = Bilingual(vi: "Giữ để ghi âm", en: "Hold to record")
+    static let releaseToTranslate = Bilingual(vi: "Thả tay để dịch", en: "Release to translate")
+    static let translation = Bilingual(vi: "Bản dịch", en: "Translation")
+    static let translationFailed = Bilingual(
+        vi: "Không dịch được. Kiểm tra gói ngôn ngữ đã tải chưa, rồi thử lại.",
+        en: "Couldn't translate. Make sure the language pack is downloaded, then try again."
+    )
+
     // Kiểm tra kiểu đọc to (chấm điểm phát âm)
     static let quizModePronounce = Bilingual(vi: "Phát âm", en: "Pronounce")
     static let quizPronouncePrompt = Bilingual(vi: "Đọc to:", en: "Say it aloud:")
