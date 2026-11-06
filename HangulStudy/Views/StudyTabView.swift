@@ -5,11 +5,12 @@ struct StudyTabView: View {
     let language: AppLanguage
 
     private enum Section: CaseIterable {
-        case vocabulary, vocabQuiz, grammar, exercises
+        case vocabulary, flashcards, vocabQuiz, grammar, exercises
 
         var title: Bilingual {
             switch self {
             case .vocabulary: return L.studyVocabulary
+            case .flashcards: return L.studyFlashcards
             case .vocabQuiz: return L.studyVocabQuiz
             case .grammar: return L.studyGrammar
             case .exercises: return L.studyExercises
@@ -22,6 +23,27 @@ struct StudyTabView: View {
     @State private var unit: Int?
     @State private var lesson: String?
 
+    @ObservedObject private var vocabStore = ProgressStore.vocab
+    @AppStorage("learnedVocab") private var learnedRaw = ""
+
+    /// Giá trị đặc biệt của bộ lọc bài: các từ đã ôn và tới hạn ôn lại.
+    private static let dueTag = "__due__"
+
+    private var dueWords: [Vocab] { StudyContent.vocabulary.filter { vocabStore.isReviewDue(key: $0.word) } }
+
+    /// Từ vựng theo bộ lọc hiện tại, dùng chung cho danh sách, thẻ và quiz.
+    private var vocabWords: [Vocab] {
+        lesson == Self.dueTag ? dueWords : StudyContent.words(unit: unit, lesson: lesson)
+    }
+
+    private var vocabKey: String { "\(unit ?? 0)|\(lesson ?? "")" }
+
+    private func lessonLabel(_ lesson: Lesson) -> String {
+        let learned = StudyContent.learnedIDs(learnedRaw)
+        let done = StudyContent.words(unit: nil, lesson: lesson.title).filter { learned.contains($0.id) }.count
+        return "\(lesson.title) (\(done)/\(lesson.words.count))"
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -32,11 +54,15 @@ struct StudyTabView: View {
                 .padding([.horizontal, .top])
 
                 switch section {
-                case .vocabulary: VocabularyListView(language: language, unit: unit, lesson: lesson)
+                case .vocabulary:
+                    VocabularyListView(language: language, words: vocabWords,
+                                       grouped: lesson != nil && lesson != Self.dueTag)
+                case .flashcards:
+                    FlashcardView(language: language, words: vocabWords, reloadKey: vocabKey)
                 case .vocabQuiz:
-                    GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)|\(lesson ?? "")") {
-                        StudyContent.vocabQuiz(unit: unit, lesson: lesson)
-                    }
+                    GrammarExerciseView(language: language, reloadKey: vocabKey,
+                                        makeQuestions: { StudyContent.vocabQuiz(from: vocabWords) },
+                                        onAnswer: { vocabStore.record(key: $0.sentence, correct: $1) })
                 case .grammar: GrammarListView(language: language, unit: unit)
                 case .exercises: GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)") {
                         StudyContent.exercises.filter { unit == nil || $0.unit == unit }
@@ -46,11 +72,14 @@ struct StudyTabView: View {
             .navigationTitle(L.studyTitle(language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if section == .vocabulary || section == .vocabQuiz {
+                if [.vocabulary, .flashcards, .vocabQuiz].contains(section) {
                     ToolbarItem(placement: .topBarLeading) {
                         Picker(L.studyUnit(language), selection: $lesson) {
                             Text(L.studyAllUnits(language)).tag(String?.none)
-                            ForEach(StudyContent.lessons, id: \.title) { Text($0.title).tag(String?.some($0.title)) }
+                            if !dueWords.isEmpty || lesson == Self.dueTag {
+                                Text("\(L.studyDue(language)) (\(dueWords.count))").tag(String?.some(Self.dueTag))
+                            }
+                            ForEach(StudyContent.lessons, id: \.title) { Text(lessonLabel($0)).tag(String?.some($0.title)) }
                         }
                         .pickerStyle(.menu)
                     }
@@ -69,17 +98,18 @@ struct StudyTabView: View {
 
 private struct VocabularyListView: View {
     let language: AppLanguage
-    let unit: Int?
-    let lesson: String?
+    let words: [Vocab]
+    /// Chia thành từng nhóm 7 từ (như bản web); không thì giữ một danh sách liền.
+    let grouped: Bool
 
     /// Id các từ đã thuộc, lưu dạng "1,2,3" trong UserDefaults.
     @AppStorage("learnedVocab") private var learnedRaw = ""
     @State private var search = ""
 
-    private var learned: Set<Int> { Set(learnedRaw.split(separator: ",").compactMap { Int($0) }) }
+    private var learned: Set<Int> { StudyContent.learnedIDs(learnedRaw) }
 
-    private var words: [Vocab] {
-        StudyContent.words(unit: unit, lesson: lesson).filter { word in
+    private var shown: [Vocab] {
+        words.filter { word in
             search.isEmpty || word.word.contains(search)
                 || word.meaning.localizedCaseInsensitiveContains(search)
                 || word.reading.localizedCaseInsensitiveContains(search)
@@ -96,14 +126,14 @@ private struct VocabularyListView: View {
         }
         .listStyle(.plain)
         .searchable(text: $search)
-        .overlay { if words.isEmpty { Text(L.studyEmpty(language)).foregroundStyle(.secondary) } }
+        .overlay { if shown.isEmpty { Text(L.studyEmpty(language)).foregroundStyle(.secondary) } }
     }
 
-    /// Khi đã chọn một bài, chia thành từng nhóm 7 từ (như bản web); ngược lại giữ một danh sách liền.
+    /// Nhóm 7 từ khi `grouped`, ngược lại một nhóm duy nhất.
     private var groups: [(start: Int, title: String, words: [Vocab])] {
-        guard lesson != nil else { return [(0, "", words)] }
-        return stride(from: 0, to: words.count, by: 7).enumerated().map { index, start in
-            (start, "\(L.studyGroup(language)) \(index + 1)", Array(words[start..<min(start + 7, words.count)]))
+        guard grouped else { return [(0, "", shown)] }
+        return stride(from: 0, to: shown.count, by: 7).enumerated().map { index, start in
+            (start, "\(L.studyGroup(language)) \(index + 1)", Array(shown[start..<min(start + 7, shown.count)]))
         }
     }
 
@@ -132,7 +162,7 @@ private struct VocabularyListView: View {
     private func toggle(_ id: Int) {
         var ids = learned
         if !ids.insert(id).inserted { ids.remove(id) }
-        learnedRaw = ids.sorted().map(String.init).joined(separator: ",")
+        learnedRaw = StudyContent.learnedRaw(ids)
     }
 }
 

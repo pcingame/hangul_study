@@ -6,6 +6,8 @@ struct GrammarExerciseView: View {
     /// Đổi giá trị này (đổi bộ lọc) thì làm lại từ đầu.
     let reloadKey: String
     let makeQuestions: () -> [GrammarExercise]
+    /// Gọi sau mỗi câu trả lời (câu hỏi, đúng/sai); dùng để ghi lịch ôn.
+    var onAnswer: ((GrammarExercise, Bool) -> Void)?
 
     private static let roundSize = 10
 
@@ -13,6 +15,7 @@ struct GrammarExerciseView: View {
     @State private var index = 0
     @State private var picked: String?
     @State private var correctCount = 0
+    @State private var missed: [GrammarExercise] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -21,6 +24,9 @@ struct GrammarExerciseView: View {
             } else if index >= questions.count {
                 Text("\(L.score(language)): \(correctCount)/\(questions.count)").font(.title2)
                 Button(L.tryAgain(language), action: restart).buttonStyle(.borderedProminent)
+                if !missed.isEmpty {
+                    Button("\(L.retryMissed(language)) (\(missed.count))", action: retryMissed).buttonStyle(.bordered)
+                }
             } else {
                 let question = questions[index]
                 Text("\(L.questionProgress(language)) \(index + 1)/\(questions.count)")
@@ -58,14 +64,26 @@ struct GrammarExerciseView: View {
         index = 0
         picked = nil
         correctCount = 0
+        missed = []
+    }
+
+    /// Làm lại chỉ những câu vừa sai.
+    private func retryMissed() {
+        questions = missed.shuffled()
+        index = 0
+        picked = nil
+        correctCount = 0
+        missed = []
     }
 
     private func answer(_ option: String, of question: GrammarExercise) {
         picked = option
+        onAnswer?(question, option == question.answer)
         if option == question.answer {
             correctCount += 1
             SoundEffects.shared.playCorrect()
         } else {
+            missed.append(question)
             SoundEffects.shared.playWrong()
         }
     }

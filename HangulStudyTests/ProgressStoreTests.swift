@@ -9,6 +9,29 @@ struct ProgressStoreTests {
         ProgressStore(defaults: UserDefaults(suiteName: "progress-\(UUID().uuidString)")!)
     }
 
+    // MARK: Từ vựng (khóa tùy ý)
+
+    @Test func unseenKeyIsNotReviewDue() {
+        #expect(!makeStore().isReviewDue(key: "안녕하세요"))
+    }
+
+    @Test func wrongAnswerMakesKeyDueNowAndCorrectPushesItOut() {
+        let store = makeStore()
+        store.record(key: "물", correct: false)
+        #expect(store.isReviewDue(key: "물"))
+        store.record(key: "물", correct: true)
+        #expect(!store.isReviewDue(key: "물"))
+    }
+
+    @Test func differentKeyNamesKeepSeparateProgressPerStore() {
+        let defaults = UserDefaults(suiteName: "progress-\(UUID().uuidString)")!
+        let letters = ProgressStore(defaults: defaults)
+        let vocab = ProgressStore(defaults: defaults, key: "vocabProgress")
+        vocab.record(key: "물", correct: true)
+        #expect(letters.entries.isEmpty)
+        #expect(ProgressStore(defaults: defaults, key: "vocabProgress").entries["물"]?.correct == 1)
+    }
+
     // MARK: Trạng thái ban đầu
 
     @Test func unseenLetterHasEmptyProgress() {

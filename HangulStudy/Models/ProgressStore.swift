@@ -16,17 +16,20 @@ struct LetterProgress: Codable {
 @MainActor
 final class ProgressStore: ObservableObject {
     static let shared = ProgressStore()
+    /// Tiến độ ôn từ vựng giáo trình, khóa là chữ Hàn của từ. Tách riêng khỏi tiến độ chữ cái.
+    static let vocab = ProgressStore(key: "vocabProgress")
 
     @Published private(set) var entries: [String: LetterProgress] = [:]
 
     private let defaults: UserDefaults
-    private let key = "letterProgress"
+    private let key: String
 
     /// Khoảng cách ôn lại theo ô, tính bằng ngày.
     private static let intervalDays: [Double] = [0, 1, 3, 7, 16, 35]
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, key: String = "letterProgress") {
         self.defaults = defaults
+        self.key = key
         if let data = defaults.data(forKey: key),
            let decoded = try? JSONDecoder().decode([String: LetterProgress].self, from: data) {
             entries = decoded
@@ -39,7 +42,11 @@ final class ProgressStore: ObservableObject {
 
     /// Ghi lại một lần trả lời trong quiz và dời lịch ôn.
     func record(_ letter: HangulLetter, correct isCorrect: Bool) {
-        var entry = entries[letter.character] ?? LetterProgress()
+        record(key: letter.character, correct: isCorrect)
+    }
+
+    func record(key: String, correct isCorrect: Bool) {
+        var entry = entries[key] ?? LetterProgress()
         if isCorrect {
             entry.correct += 1
             entry.box = min(entry.box + 1, Self.intervalDays.count - 1)
@@ -50,8 +57,14 @@ final class ProgressStore: ObservableObject {
         let now = Date()
         entry.lastReviewed = now
         entry.nextReview = now.addingTimeInterval(Self.intervalDays[entry.box] * 86_400)
-        entries[letter.character] = entry
+        entries[key] = entry
         save()
+    }
+
+    /// Đã từng ôn và tới hạn ôn lại (khác `dueLetters`: mục chưa gặp không tính là tới hạn).
+    func isReviewDue(key: String) -> Bool {
+        guard let next = entries[key]?.nextReview else { return false }
+        return next <= Date()
     }
 
     /// Các chữ chưa gặp hoặc đã tới hạn ôn lại.
