@@ -223,10 +223,12 @@ enum L {
     static let studyTab = Bilingual(vi: "Từ vựng", en: "Vocabulary")
     static let studyTitle = Bilingual(vi: "Giáo trình", en: "Course")
     static let studyVocabulary = Bilingual(vi: "Từ vựng", en: "Words")
+    static let studyVocabQuiz = Bilingual(vi: "Ôn từ", en: "Quiz")
     static let studyGrammar = Bilingual(vi: "Ngữ pháp", en: "Grammar")
     static let studyExercises = Bilingual(vi: "Bài tập", en: "Exercises")
     static let studyUnit = Bilingual(vi: "Bài", en: "Unit")
     static let studyAllUnits = Bilingual(vi: "Tất cả", en: "All")
+    static let studyGroup = Bilingual(vi: "Nhóm", en: "Set")
     static let studyEmpty = Bilingual(vi: "Chưa có nội dung cho mục này", en: "Nothing here yet")
 
     // Ghi âm & dịch

@@ -13,6 +13,12 @@ struct Vocab: Codable, Identifiable {
     let translation: String
 }
 
+/// Một bài của giáo trình Seoul: tiêu đề (vd "Seoul 1A · Bài 1") và các từ theo đúng thứ tự giáo trình.
+struct Lesson: Codable {
+    let title: String
+    let words: [String]
+}
+
 struct GrammarPoint: Codable, Identifiable {
     struct Example: Codable {
         let korean: String
@@ -41,9 +47,30 @@ enum StudyContent {
     static let vocabulary: [Vocab] = load("vocabulary")
     static let grammar: [GrammarPoint] = load("grammar")
     static let exercises: [GrammarExercise] = load("grammar-exercises")
+    static let lessons: [Lesson] = load("lessons")
+
+    /// Từ vựng theo bộ lọc: chọn một bài giáo trình thì lấy đủ từ của bài đó (đúng thứ tự giáo trình), không thì lọc theo unit.
+    static func words(unit: Int?, lesson: String?) -> [Vocab] {
+        if let lesson, let found = lessons.first(where: { $0.title == lesson }) {
+            let byWord = Dictionary(vocabulary.map { ($0.word, $0) }, uniquingKeysWith: { first, _ in first })
+            return found.words.compactMap { byWord[$0] }
+        }
+        return vocabulary.filter { unit == nil || $0.unit == unit }
+    }
 
     /// Các bài (unit) có trong nội dung, để làm bộ lọc.
     static let units: [Int] = Set(vocabulary.compactMap(\.unit) + grammar.compactMap(\.unit)).sorted()
+
+    /// Quiz từ vựng: hiện từ Hàn, chọn nghĩa đúng trong 4 đáp án (nhiễu lấy từ cùng bộ lọc, thiếu thì lấy toàn bộ từ vựng).
+    static func vocabQuiz(unit: Int?, lesson: String?) -> [GrammarExercise] {
+        let pool = words(unit: unit, lesson: lesson)
+        return pool.map { word in
+            let others = (pool.count >= 4 ? pool : vocabulary).map(\.meaning).filter { $0 != word.meaning }
+            let options = (Array(Set(others)).shuffled().prefix(3) + [word.meaning]).shuffled()
+            return GrammarExercise(sentence: word.word, vi: word.reading, options: Array(options),
+                                   answer: word.meaning, note: "\(word.example)\n\(word.translation)", unit: word.unit)
+        }
+    }
 
     private static func load<T: Decodable>(_ name: String) -> [T] {
         guard let url = Bundle.main.url(forResource: name, withExtension: "json"),

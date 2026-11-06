@@ -5,11 +5,12 @@ struct StudyTabView: View {
     let language: AppLanguage
 
     private enum Section: CaseIterable {
-        case vocabulary, grammar, exercises
+        case vocabulary, vocabQuiz, grammar, exercises
 
         var title: Bilingual {
             switch self {
             case .vocabulary: return L.studyVocabulary
+            case .vocabQuiz: return L.studyVocabQuiz
             case .grammar: return L.studyGrammar
             case .exercises: return L.studyExercises
             }
@@ -19,6 +20,7 @@ struct StudyTabView: View {
     @State private var section = Section.vocabulary
     /// `nil` = tất cả các bài.
     @State private var unit: Int?
+    @State private var lesson: String?
 
     var body: some View {
         NavigationStack {
@@ -30,14 +32,29 @@ struct StudyTabView: View {
                 .padding([.horizontal, .top])
 
                 switch section {
-                case .vocabulary: VocabularyListView(language: language, unit: unit)
+                case .vocabulary: VocabularyListView(language: language, unit: unit, lesson: lesson)
+                case .vocabQuiz:
+                    GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)|\(lesson ?? "")") {
+                        StudyContent.vocabQuiz(unit: unit, lesson: lesson)
+                    }
                 case .grammar: GrammarListView(unit: unit)
-                case .exercises: GrammarExerciseView(language: language, unit: unit)
+                case .exercises: GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)") {
+                        StudyContent.exercises.filter { unit == nil || $0.unit == unit }
+                    }
                 }
             }
             .navigationTitle(L.studyTitle(language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if section == .vocabulary || section == .vocabQuiz {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Picker(L.studyUnit(language), selection: $lesson) {
+                            Text(L.studyAllUnits(language)).tag(String?.none)
+                            ForEach(StudyContent.lessons, id: \.title) { Text($0.title).tag(String?.some($0.title)) }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Picker(L.studyUnit(language), selection: $unit) {
                         Text(L.studyAllUnits(language)).tag(Int?.none)
@@ -53,6 +70,7 @@ struct StudyTabView: View {
 private struct VocabularyListView: View {
     let language: AppLanguage
     let unit: Int?
+    let lesson: String?
 
     /// Id các từ đã thuộc, lưu dạng "1,2,3" trong UserDefaults.
     @AppStorage("learnedVocab") private var learnedRaw = ""
@@ -61,39 +79,54 @@ private struct VocabularyListView: View {
     private var learned: Set<Int> { Set(learnedRaw.split(separator: ",").compactMap { Int($0) }) }
 
     private var words: [Vocab] {
-        StudyContent.vocabulary.filter { word in
-            (unit == nil || word.unit == unit)
-                && (search.isEmpty || word.word.contains(search)
-                    || word.meaning.localizedCaseInsensitiveContains(search)
-                    || word.reading.localizedCaseInsensitiveContains(search))
+        StudyContent.words(unit: unit, lesson: lesson).filter { word in
+            search.isEmpty || word.word.contains(search)
+                || word.meaning.localizedCaseInsensitiveContains(search)
+                || word.reading.localizedCaseInsensitiveContains(search)
         }
     }
 
     var body: some View {
-        List(words) { word in
-            HStack(spacing: 12) {
-                Button { SpeechService.shared.speak(word.word) } label: {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(word.word).font(.title3)
-                        Text("\(word.reading) · \(word.meaning)").font(.subheadline)
-                        Text(word.example).font(.caption).foregroundStyle(.secondary)
-                        Text(word.translation).font(.caption).foregroundStyle(.secondary)
-                    }
+        List {
+            ForEach(groups, id: \.start) { group in
+                Section(group.title) {
+                    ForEach(group.words) { wordRow($0) }
                 }
-                .buttonStyle(.plain)
-
-                Spacer()
-
-                Button { toggle(word.id) } label: {
-                    Image(systemName: learned.contains(word.id) ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(learned.contains(word.id) ? Color.green : .secondary)
-                }
-                .buttonStyle(.borderless)
             }
         }
         .listStyle(.plain)
         .searchable(text: $search)
         .overlay { if words.isEmpty { Text(L.studyEmpty(language)).foregroundStyle(.secondary) } }
+    }
+
+    /// Khi đã chọn một bài, chia thành từng nhóm 7 từ (như bản web); ngược lại giữ một danh sách liền.
+    private var groups: [(start: Int, title: String, words: [Vocab])] {
+        guard lesson != nil else { return [(0, "", words)] }
+        return stride(from: 0, to: words.count, by: 7).enumerated().map { index, start in
+            (start, "\(L.studyGroup(language)) \(index + 1)", Array(words[start..<min(start + 7, words.count)]))
+        }
+    }
+
+    private func wordRow(_ word: Vocab) -> some View {
+        HStack(spacing: 12) {
+            Button { SpeechService.shared.speak(word.word) } label: {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(word.word).font(.title3)
+                    Text("\(word.reading) · \(word.meaning)").font(.subheadline)
+                    Text(word.example).font(.caption).foregroundStyle(.secondary)
+                    Text(word.translation).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Button { toggle(word.id) } label: {
+                Image(systemName: learned.contains(word.id) ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(learned.contains(word.id) ? Color.green : .secondary)
+            }
+            .buttonStyle(.borderless)
+        }
     }
 
     private func toggle(_ id: Int) {

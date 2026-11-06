@@ -1,9 +1,13 @@
 import SwiftUI
 
-/// Bài tập điền chỗ trống ngữ pháp: chọn đáp án, xem ghi chú, qua câu tiếp, cuối cùng xem điểm.
+/// Bài tập trắc nghiệm theo đợt 10 câu (ngữ pháp, hoặc quiz từ vựng): chọn đáp án, xem ghi chú, qua câu tiếp, cuối cùng xem điểm.
 struct GrammarExerciseView: View {
     let language: AppLanguage
-    let unit: Int?
+    /// Đổi giá trị này (đổi bộ lọc) thì làm lại từ đầu.
+    let reloadKey: String
+    let makeQuestions: () -> [GrammarExercise]
+
+    private static let roundSize = 10
 
     @State private var questions: [GrammarExercise] = []
     @State private var index = 0
@@ -46,11 +50,11 @@ struct GrammarExerciseView: View {
         }
         .padding()
         .onAppear(perform: restart)
-        .onChange(of: unit) { restart() }
+        .onChange(of: reloadKey) { restart() }
     }
 
     private func restart() {
-        questions = StudyContent.exercises.filter { unit == nil || $0.unit == unit }.shuffled()
+        questions = Array(makeQuestions().shuffled().prefix(Self.roundSize))
         index = 0
         picked = nil
         correctCount = 0
