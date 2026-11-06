@@ -1,18 +1,27 @@
 import SwiftUI
 
-/// Tab "Từ vựng": từ vựng, ngữ pháp và bài tập ngữ pháp từ giáo trình, lọc theo bài.
+/// Tab "Giáo trình": từ vựng (danh sách, thẻ, quiz) và ngữ pháp (bài học, bài tập), lọc theo bài.
 struct StudyTabView: View {
     let language: AppLanguage
+
+    private enum Topic: CaseIterable {
+        case vocabulary, grammar
+
+        var title: Bilingual { self == .vocabulary ? L.studyVocabulary : L.studyGrammar }
+        var sections: [Section] { self == .vocabulary ? [.vocabulary, .flashcards, .vocabQuiz] : [.grammar, .exercises] }
+    }
 
     private enum Section: CaseIterable {
         case vocabulary, flashcards, vocabQuiz, grammar, exercises
 
+        var topic: Topic { [.vocabulary, .flashcards, .vocabQuiz].contains(self) ? .vocabulary : .grammar }
+
         var title: Bilingual {
             switch self {
-            case .vocabulary: return L.studyVocabulary
+            case .vocabulary: return L.studyList
             case .flashcards: return L.studyFlashcards
             case .vocabQuiz: return L.studyVocabQuiz
-            case .grammar: return L.studyGrammar
+            case .grammar: return L.studyLessons
             case .exercises: return L.studyExercises
             }
         }
@@ -38,20 +47,39 @@ struct StudyTabView: View {
 
     private var vocabKey: String { "\(unit ?? 0)|\(lesson ?? "")" }
 
+    private var isVocab: Bool { section.topic == .vocabulary }
+
     private func lessonLabel(_ lesson: Lesson) -> String {
         let learned = StudyContent.learnedIDs(learnedRaw)
         let done = StudyContent.words(unit: nil, lesson: lesson.title).filter { learned.contains($0.id) }.count
         return "\(lesson.title) (\(done)/\(lesson.words.count))"
     }
 
+    /// Tên bộ lọc đang áp dụng, hiện ngay dưới thanh chọn chế độ.
+    private var activeFilterName: String {
+        if isVocab, let lesson { return lesson == Self.dueTag ? L.studyDue(language) : lesson }
+        if let unit { return "\(L.studyUnit(language)) \(unit)" }
+        return L.studyAllUnits(language)
+    }
+
+    private var filterIsActive: Bool { (isVocab && lesson != nil) || unit != nil }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                Picker("", selection: $section) {
-                    ForEach(Section.allCases, id: \.self) { Text($0.title(language)).tag($0) }
+            VStack(spacing: 8) {
+                Picker("", selection: Binding(get: { section.topic }, set: { section = $0.sections[0] })) {
+                    ForEach(Topic.allCases, id: \.self) { Text($0.title(language)).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .padding([.horizontal, .top])
+
+                Picker("", selection: $section) {
+                    ForEach(section.topic.sections, id: \.self) { Text($0.title(language)).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+
+                filterSummary
 
                 switch section {
                 case .vocabulary:
@@ -64,7 +92,8 @@ struct StudyTabView: View {
                                         makeQuestions: { StudyContent.vocabQuiz(from: vocabWords) },
                                         onAnswer: { vocabStore.record(key: $0.sentence, correct: $1) })
                 case .grammar: GrammarListView(language: language, unit: unit)
-                case .exercises: GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)") {
+                case .exercises:
+                    GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)") {
                         StudyContent.exercises.filter { unit == nil || $0.unit == unit }
                     }
                 }
@@ -72,27 +101,53 @@ struct StudyTabView: View {
             .navigationTitle(L.studyTitle(language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if [.vocabulary, .flashcards, .vocabQuiz].contains(section) {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Picker(L.studyUnit(language), selection: $lesson) {
-                            Text(L.studyAllUnits(language)).tag(String?.none)
-                            if !dueWords.isEmpty || lesson == Self.dueTag {
-                                Text("\(L.studyDue(language)) (\(dueWords.count))").tag(String?.some(Self.dueTag))
-                            }
-                            ForEach(StudyContent.lessons, id: \.title) { Text(lessonLabel($0)).tag(String?.some($0.title)) }
-                        }
-                        .pickerStyle(.menu)
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Picker(L.studyUnit(language), selection: $unit) {
-                        Text(L.studyAllUnits(language)).tag(Int?.none)
-                        ForEach(StudyContent.units, id: \.self) { Text("\(L.studyUnit(language)) \($0)").tag(Int?.some($0)) }
+                    Menu {
+                        if isVocab {
+                            Picker(L.studyLessonFilter(language), selection: $lesson) {
+                                Text(L.studyAllUnits(language)).tag(String?.none)
+                                if !dueWords.isEmpty || lesson == Self.dueTag {
+                                    Text("\(L.studyDue(language)) (\(dueWords.count))").tag(String?.some(Self.dueTag))
+                                }
+                                ForEach(StudyContent.lessons, id: \.title) { Text(lessonLabel($0)).tag(String?.some($0.title)) }
+                            }
+                        }
+                        Picker(L.studyUnit(language), selection: $unit) {
+                            Text(L.studyAllUnits(language)).tag(Int?.none)
+                            ForEach(StudyContent.units, id: \.self) { Text("\(L.studyUnit(language)) \($0)").tag(Int?.some($0)) }
+                        }
+                    } label: {
+                        Image(systemName: filterIsActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
                     }
-                    .pickerStyle(.menu)
+                    .accessibilityLabel(L.studyFilter(language))
                 }
             }
         }
+    }
+
+    /// Tên bộ lọc hiện tại; với từ vựng kèm số từ đã thuộc và thanh tiến độ.
+    private var filterSummary: some View {
+        VStack(spacing: 4) {
+            HStack {
+                Label(activeFilterName, systemImage: "line.3.horizontal.decrease")
+                    .font(.footnote).foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Spacer()
+                if isVocab {
+                    Text("\(learnedCount)/\(vocabWords.count)")
+                        .font(.footnote).monospacedDigit().foregroundStyle(.secondary)
+                }
+            }
+            if isVocab {
+                ProgressView(value: Double(learnedCount), total: Double(max(vocabWords.count, 1)))
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var learnedCount: Int {
+        let learned = StudyContent.learnedIDs(learnedRaw)
+        return vocabWords.filter { learned.contains($0.id) }.count
     }
 }
 
@@ -119,7 +174,10 @@ private struct VocabularyListView: View {
     var body: some View {
         List {
             ForEach(groups, id: \.start) { group in
-                Section(group.title) {
+                // Không chia nhóm thì không dùng Section: tiêu đề rỗng vẫn chừa một khoảng trống lớn.
+                if grouped {
+                    Section(group.title) { ForEach(group.words) { wordRow($0) } }
+                } else {
                     ForEach(group.words) { wordRow($0) }
                 }
             }
@@ -156,6 +214,8 @@ private struct VocabularyListView: View {
                     .foregroundStyle(learned.contains(word.id) ? Color.green : .secondary)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel(L.flashcardLearned(language))
+            .accessibilityAddTraits(learned.contains(word.id) ? .isSelected : [])
         }
     }
 

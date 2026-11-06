@@ -18,43 +18,46 @@ struct GrammarExerciseView: View {
     @State private var missed: [GrammarExercise] = []
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            if questions.isEmpty {
-                Text(L.studyEmpty(language)).foregroundStyle(.secondary)
-            } else if index >= questions.count {
-                Text("\(L.score(language)): \(correctCount)/\(questions.count)").font(.title2)
-                Button(L.tryAgain(language), action: restart).buttonStyle(.borderedProminent)
-                if !missed.isEmpty {
-                    Button("\(L.retryMissed(language)) (\(missed.count))", action: retryMissed).buttonStyle(.bordered)
-                }
-            } else {
-                let question = questions[index]
-                Text("\(L.questionProgress(language)) \(index + 1)/\(questions.count)")
-                    .font(.caption).foregroundStyle(.secondary)
-                Text(question.sentence).font(.title2)
-                Text(question.vi).foregroundStyle(.secondary)
-
-                ForEach(question.options, id: \.self) { option in
-                    Button { answer(option, of: question) } label: {
-                        Text(option).frame(maxWidth: .infinity)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                if questions.isEmpty {
+                    Text(L.studyEmpty(language)).foregroundStyle(.secondary)
+                } else if index >= questions.count {
+                    ResultView(correct: correctCount, total: questions.count) {
+                        Button(L.tryAgain(language), action: restart).buttonStyle(.borderedProminent)
+                        if !missed.isEmpty {
+                            Button("\(L.retryMissed(language)) (\(missed.count))", action: retryMissed).buttonStyle(.bordered)
+                        }
                     }
-                    .buttonStyle(.bordered)
-                    .tint(tint(for: option, in: question))
-                    .disabled(picked != nil)
-                }
+                } else {
+                    let question = questions[index]
+                    Text("\(L.questionProgress(language)) \(index + 1)/\(questions.count)")
+                        .font(.caption).foregroundStyle(.secondary)
+                    ProgressView(value: Double(index), total: Double(questions.count))
+                    Text(question.sentence).font(.title2)
+                    Text(question.vi).foregroundStyle(.secondary)
 
-                if picked != nil {
-                    Text(question.note).font(.footnote).foregroundStyle(.secondary)
-                    Button(index + 1 == questions.count ? L.seeResult(language) : L.nextQuestion(language)) {
-                        index += 1
-                        picked = nil
+                    ForEach(question.options, id: \.self) { option in
+                        Button { answer(option, of: question) } label: {
+                            Text(option).frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(tint(for: option, in: question))
+                        .disabled(picked != nil)
                     }
-                    .buttonStyle(.borderedProminent)
+
+                    if picked != nil {
+                        Text(question.note).font(.footnote).foregroundStyle(.secondary)
+                        Button(index + 1 == questions.count ? L.seeResult(language) : L.nextQuestion(language)) {
+                            index += 1
+                            picked = nil
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
                 }
             }
-            Spacer()
+            .padding()
         }
-        .padding()
         .onAppear(perform: restart)
         .onChange(of: reloadKey) { restart() }
     }
