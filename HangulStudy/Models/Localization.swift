@@ -229,6 +229,7 @@ enum L {
     static let studyUnit = Bilingual(vi: "Bài", en: "Unit")
     static let studyAllUnits = Bilingual(vi: "Tất cả", en: "All")
     static let studyGroup = Bilingual(vi: "Nhóm", en: "Set")
+    static let studyOther = Bilingual(vi: "Khác", en: "Other")
     static let studyEmpty = Bilingual(vi: "Chưa có nội dung cho mục này", en: "Nothing here yet")
 
     // Ghi âm & dịch

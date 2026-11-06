@@ -37,7 +37,7 @@ struct StudyTabView: View {
                     GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)|\(lesson ?? "")") {
                         StudyContent.vocabQuiz(unit: unit, lesson: lesson)
                     }
-                case .grammar: GrammarListView(unit: unit)
+                case .grammar: GrammarListView(language: language, unit: unit)
                 case .exercises: GrammarExerciseView(language: language, reloadKey: "\(unit ?? 0)") {
                         StudyContent.exercises.filter { unit == nil || $0.unit == unit }
                     }
@@ -137,29 +137,47 @@ private struct VocabularyListView: View {
 }
 
 private struct GrammarListView: View {
+    let language: AppLanguage
     let unit: Int?
 
-    private var points: [GrammarPoint] {
-        StudyContent.grammar.filter { unit == nil || $0.unit == unit }
+    /// Gom theo bài (unit); các điểm chưa gắn bài xếp cuối trong mục "Khác".
+    private var sections: [(unit: Int?, points: [GrammarPoint])] {
+        let points = StudyContent.grammar.filter { unit == nil || $0.unit == unit }
+        let grouped = Dictionary(grouping: points, by: \.unit)
+        return grouped.keys.sorted { ($0 ?? .max) < ($1 ?? .max) }.map { ($0, grouped[$0] ?? []) }
     }
 
     var body: some View {
-        List(points) { point in
-            VStack(alignment: .leading, spacing: 6) {
-                Text(point.title).font(.headline)
-                Text(point.explanation).font(.subheadline)
-                ForEach(point.examples, id: \.korean) { example in
-                    Button { SpeechService.shared.speak(example.korean) } label: {
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(example.korean)
-                            Text(example.vietnamese).font(.caption).foregroundStyle(.secondary)
-                        }
+        List {
+            ForEach(sections, id: \.unit) { section in
+                Section(section.unit.map { "\(L.studyUnit(language)) \($0)" } ?? L.studyOther(language)) {
+                    ForEach(section.points) { point in
+                        NavigationLink(point.title) { GrammarDetailView(point: point) }
                     }
-                    .buttonStyle(.plain)
                 }
             }
-            .padding(.vertical, 2)
         }
         .listStyle(.plain)
+    }
+}
+
+private struct GrammarDetailView: View {
+    let point: GrammarPoint
+
+    var body: some View {
+        List {
+            Text(point.explanation).font(.subheadline)
+            ForEach(point.examples, id: \.korean) { example in
+                Button { SpeechService.shared.speak(example.korean) } label: {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(example.korean)
+                        Text(example.vietnamese).font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .navigationTitle(point.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
