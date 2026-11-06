@@ -3,7 +3,7 @@ import Testing
 
 struct StudyContentTests {
     @Test func bundledContentLoads() {
-        #expect(StudyContent.vocabulary.count == 408)
+        #expect(StudyContent.vocabulary.count == 986)
         #expect(StudyContent.grammar.count == 70)
         #expect(StudyContent.exercises.count == 87)
         #expect(StudyContent.units == Array(1...8))
