@@ -43,6 +43,7 @@ struct WritingPracticeView: View {
                         Image(systemName: "speaker.wave.2.fill")
                             .font(.title2)
                     }
+                    .accessibilityLabel(L.listen(language))
                 }
                 .padding(.horizontal)
 

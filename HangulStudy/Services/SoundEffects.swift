@@ -1,4 +1,5 @@
 import AVFoundation
+import UIKit
 
 /// Âm báo đúng / sai cho quiz. Tổng hợp sẵn vài nốt sine ngắn nên không cần file âm thanh.
 final class SoundEffects {
@@ -33,8 +34,8 @@ final class SoundEffects {
         (correctPlayer?.duration ?? 0, wrongPlayer?.duration ?? 0, completePlayer?.duration ?? 0)
     }
 
-    func playCorrect() { play(correctPlayer) }
-    func playWrong() { play(wrongPlayer) }
+    func playCorrect() { play(correctPlayer); UINotificationFeedbackGenerator().notificationOccurred(.success) }
+    func playWrong() { play(wrongPlayer); UINotificationFeedbackGenerator().notificationOccurred(.error) }
     func playComplete() { play(completePlayer) }
 
     private func play(_ player: AVAudioPlayer?) {

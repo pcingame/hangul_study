@@ -63,6 +63,7 @@ private struct NumberRow: View {
                 Text(reading)
                 Image(systemName: "speaker.wave.2")
                     .font(.caption)
+                    .accessibilityHidden(true)
             }
         }
         .buttonStyle(.plain)

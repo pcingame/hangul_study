@@ -29,9 +29,6 @@ struct RootView: View {
 
             WritingPracticeView(language: language)
                 .tabItem { Label(L.writeTab(language), systemImage: "pencil.and.scribble") }
-
-            SettingsView()
-                .tabItem { Label(L.settingsTab(language), systemImage: "gearshape") }
         }
         .preferredColorScheme(appearance.colorScheme)
         .fullScreenCover(isPresented: .constant(!didOnboard)) {

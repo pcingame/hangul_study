@@ -66,6 +66,7 @@ enum L {
     static let letterName = Bilingual(vi: "Tên chữ", en: "Letter name")
     static let example = Bilingual(vi: "Ví dụ", en: "Example")
     static let listen = Bilingual(vi: "Nghe", en: "Listen")
+    static let close = Bilingual(vi: "Đóng", en: "Close")
     static let listenLetter = Bilingual(vi: "Nghe chữ cái", en: "Listen to letter")
     static let listenWord = Bilingual(vi: "Nghe từ ví dụ", en: "Listen to example")
 

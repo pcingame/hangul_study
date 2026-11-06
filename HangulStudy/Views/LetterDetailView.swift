@@ -157,6 +157,7 @@ struct LetterDetailView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityLabel(L.close(language))
                 }
             }
             .onDisappear {

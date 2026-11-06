@@ -5,6 +5,7 @@ struct LearnView: View {
 
     @State private var selectedLetter: HangulLetter?
     @State private var showRemainingOnly = false
+    @State private var showSettings = false
     @ObservedObject private var progress = ProgressStore.shared
 
     private let columns = [GridItem(.adaptive(minimum: 76), spacing: 12)]
@@ -69,6 +70,15 @@ struct LearnView: View {
             .navigationTitle(L.learnTitle(language))
             .sheet(item: $selectedLetter) { letter in
                 LetterDetailView(letter: letter, language: language)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                        .accessibilityLabel(L.settingsTab(language))
+                }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView().presentationDragIndicator(.visible)
             }
         }
     }

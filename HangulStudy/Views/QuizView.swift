@@ -315,6 +315,7 @@ struct QuizView: View {
                                 .font(.system(size: 60))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel(L.listen(language))
                         .foregroundStyle(.tint)
                     }
                 }
@@ -559,6 +560,7 @@ struct QuizView: View {
                         Spacer()
                         Image(systemName: "speaker.wave.2.fill")
                             .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
                     }
                 }
                 .buttonStyle(.plain)

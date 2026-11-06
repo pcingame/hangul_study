@@ -57,6 +57,7 @@ private struct BatchimGroupRow: View {
 
                 Image(systemName: "speaker.wave.2")
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
         }
         .buttonStyle(.plain)
@@ -92,6 +93,7 @@ private struct LiaisonRow: View {
 
                 Image(systemName: "speaker.wave.2")
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
         }
         .buttonStyle(.plain)

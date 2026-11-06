@@ -55,6 +55,7 @@ struct SyllableBuilderView: View {
                     } label: {
                         Image(systemName: "book")
                     }
+                    .accessibilityLabel(L.referenceTab(language))
                 }
             }
             .sheet(isPresented: $showReference) {
