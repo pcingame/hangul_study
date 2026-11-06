@@ -1,14 +1,15 @@
 # Release notes — HangulStudy
 
-Bản đang chuẩn bị: **1.4 (build 5)**. Dự án hiện vẫn ở **1.3 (build 4)** — chưa bump version, xem mục "Các bước phát hành".
+Bản đang chuẩn bị: **1.3 (build 5)**. Build 5 gồm cả phần dịch bằng giọng nói (đã có ở build 4) lẫn giáo trình Seoul; build number tăng lên 5 để không trùng build 4 (nếu build 4 đã từng upload). IPA đã export tại `build/ipa/HangulStudy.ipa` (không nằm trong git).
 
-## 1.4 (build 5) — Giáo trình Seoul
+## 1.3 (build 5) — Giáo trình Seoul + dịch bằng giọng nói
 
 ### Nội dung "What's New" cho App Store
 
 **Tiếng Việt**
 
 ```
+• Dịch bằng giọng nói: giữ nút ghi âm, nói tiếng Hàn và xem bản dịch sang ngôn ngữ của app.
 Tab "Từ vựng" nay bám theo giáo trình Seoul 1A–2B:
 • Hơn 980 từ vựng chia theo 33 bài, mỗi bài hiện đủ từ theo đúng thứ tự giáo trình, chia thành nhóm 7 từ.
 • Thẻ ghi nhớ (flashcard): chạm để lật, vuốt phải là "đã thuộc", vuốt trái là "chưa thuộc".
@@ -22,6 +23,7 @@ Tab "Từ vựng" nay bám theo giáo trình Seoul 1A–2B:
 **English**
 
 ```
+• Speech translation: hold to record, speak Korean and see the translation in the app language.
 The Words tab now follows the Seoul 1A–2B textbook:
 • 980+ vocabulary words across 33 lessons; each lesson lists its full vocabulary in textbook order, in groups of 7.
 • Flashcards: tap to flip, swipe right for "got it", swipe left for "not yet".
@@ -58,7 +60,7 @@ The Words tab now follows the Seoul 1A–2B textbook:
 
 ### Ghi chú gửi App Review (nối thêm vào Notes hiện có)
 ```
-Version 1.4 adds a Seoul 1A–2B vocabulary course to the existing Words tab (flashcards, quiz, spaced-repetition review). All content is bundled in the app; it works offline, needs no account and makes no network requests. Progress is stored locally on the device only. No change to permissions or to the App Privacy answers.
+Version 1.3 adds hold-to-record speech translation (existing, on-device recording) and a Seoul 1A–2B vocabulary course to the existing Words tab (flashcards, quiz, spaced-repetition review). All content is bundled in the app; it works offline, needs no account and makes no network requests. Progress is stored locally on the device only. No change to permissions or to the App Privacy answers.
 ```
 
 ### Trạng thái kiểm thử
@@ -74,7 +76,7 @@ Version 1.4 adds a Seoul 1A–2B vocabulary course to the existing Words tab (fl
 5. Thanh tìm kiếm của danh sách từ nằm trên hai thanh chọn nên danh sách bắt đầu khá thấp; xem có cần thu gọn không.
 
 ### Các bước phát hành
-1. Bump `MARKETING_VERSION` → `1.4`, `CURRENT_PROJECT_VERSION` → `5` trong `project.pbxproj` (mỗi giá trị xuất hiện 4 lần: Debug/Release × hai target).
+1. Version trong `project.pbxproj` đã là `MARKETING_VERSION = 1.3`, `CURRENT_PROJECT_VERSION = 5` (mỗi giá trị 4 lần: Debug/Release × hai target). Nếu build 5 đã bị dùng, tăng lên số lớn hơn.
 2. Chạy toàn bộ test, rồi archive Release:
    ```
    xcodebuild -project HangulStudy.xcodeproj -scheme HangulStudy -destination 'generic/platform=iOS' \
@@ -85,7 +87,7 @@ Version 1.4 adds a Seoul 1A–2B vocabulary course to the existing Words tab (fl
    xcodebuild -exportArchive -archivePath build/HangulStudy.xcarchive \
      -exportPath build/upload -exportOptionsPlist build/ExportOptionsUpload.plist
    ```
-4. App Store Connect: tạo version 1.4 → dán "What's New" ở trên → chờ build 5 xử lý xong rồi "Add Build" → nối ghi chú vào App Review Notes → Add for Review → Submit.
+4. App Store Connect: tạo/chọn version 1.3 → dán "What's New" ở trên → chờ build 5 xử lý xong rồi "Add Build" → nối ghi chú vào App Review Notes → Add for Review → Submit.
 5. Sau khi được duyệt: cập nhật mục "Sau khi được duyệt" trong `docs/APP_STORE_CHECKLIST.md` nếu có thay đổi quy trình.
 
 ---
@@ -99,5 +101,4 @@ Lấy từ lịch sử git (commit "Bump version").
 | 1.0 | 1 | Bản đầu: bảng chữ cái Hangul, ghép âm tiết, quiz nhiều chế độ có âm đúng/sai, theo dõi tiến độ (Leitner), thứ tự nét và luyện viết, onboarding, hai ngôn ngữ VI/EN |
 | 1.1 | 2 | Chấm điểm chữ viết tay, quy tắc phát âm, số đếm, chế độ quiz gõ đáp án |
 | 1.2 | 3 | Mẹo phát âm và chấm điểm phát âm (nhận dạng giọng nói trên thiết bị) |
-| 1.3 | 4 | Dịch bằng giọng nói: giữ để ghi âm, Hàn → ngôn ngữ của app |
-| 1.4 | 5 | Giáo trình Seoul: 986 từ theo bài, flashcard, ôn theo lịch, quiz từ vựng, ngữ pháp gọn hơn, nâng cấp giao diện *(đang chuẩn bị)* |
+| 1.3 | 4–5 | Dịch bằng giọng nói (giữ để ghi âm, Hàn → ngôn ngữ của app); build 5 thêm giáo trình Seoul: 986 từ theo bài, flashcard, ôn theo lịch, quiz từ vựng, ngữ pháp gọn hơn, nâng cấp giao diện *(đang chuẩn bị)* |
